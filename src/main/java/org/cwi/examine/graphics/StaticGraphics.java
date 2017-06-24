@@ -129,14 +129,14 @@ public class StaticGraphics {
     }
     
     /**
-     * Any coordinate or color changes will be transitioned
+     * Any coordinate or getColor changes will be transitioned
      * to gradually for a snippet.
      */
     public static void transition() {
         dm.transitioning = true;
     }
     
-    // Any coordinate or color changes will be instant.
+    // Any coordinate or getColor changes will be instant.
     public static void noTransition() {
         dm.transitioning = false;
     }

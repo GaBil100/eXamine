@@ -7,14 +7,14 @@ import java.util.List;
 /**
  * Category of elements.
  */
-public class HCategory<E extends HElement> {
+public class NetworkCategory<E extends NetworkElement> {
 
     public static int MAXIMUM_SIZE = 50;
 
     public final String name;
     public final List<E> annotations;
 
-    public HCategory(final String name, final List<E> annotations) {
+    public NetworkCategory(final String name, final List<E> annotations) {
         this.name = name;
 
         // Sort annotations by score, then alphabet.
@@ -54,7 +54,7 @@ public class HCategory<E extends HElement> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final HCategory other = (HCategory) obj;
+        final NetworkCategory other = (NetworkCategory) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }

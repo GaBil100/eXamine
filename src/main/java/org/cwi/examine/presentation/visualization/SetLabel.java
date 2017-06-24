@@ -3,7 +3,7 @@ package org.cwi.examine.presentation.visualization;
 import org.cwi.examine.graphics.Colors;
 import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.StaticGraphics;
-import org.cwi.examine.model.HAnnotation;
+import org.cwi.examine.model.NetworkAnnotation;
 import org.cwi.examine.model.Network;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ public class SetLabel extends SetRepresentation {
     
     protected SetList parentList;
 
-    public SetLabel(final Visualization visualization, final HAnnotation element, String text) {
+    public SetLabel(final Visualization visualization, final NetworkAnnotation element, String text) {
         super(visualization, element);
 
         this.opened = false;
@@ -39,14 +39,14 @@ public class SetLabel extends SetRepresentation {
         for(int i = 0; i < words.length; i++) {
             String w = words[i];
             
-            if(lines.size() < Parameters.SET_LABEL_MAX_LINES) {
-                if (textWidth(w) > Parameters.SET_LABEL_MAX_WIDTH) {
-                    lines.add(w.substring(0, Parameters.SET_LABEL_MAX_WIDTH / (int) (0.75 * textHeight())) + "...");
+            if(lines.size() < OverviewConstants.SET_LABEL_MAX_LINES) {
+                if (textWidth(w) > OverviewConstants.SET_LABEL_MAX_WIDTH) {
+                    lines.add(w.substring(0, OverviewConstants.SET_LABEL_MAX_WIDTH / (int) (0.75 * textHeight())) + "...");
                 } else if(lines.isEmpty()) {
                     lines.add(w);
                 } else {
                     String extW = lines.get(lines.size() - 1) + " " + w;
-                    if(textWidth(extW) < Parameters.SET_LABEL_MAX_WIDTH) {
+                    if(textWidth(extW) < OverviewConstants.SET_LABEL_MAX_WIDTH) {
                         lines.set(lines.size() - 1, extW);
                     } else {
                         lines.add(w);
@@ -71,10 +71,10 @@ public class SetLabel extends SetRepresentation {
     public PVector dimensions() {
         textFont(org.cwi.examine.graphics.draw.Parameters.labelFont);
         
-        return PVector.v(Parameters.LABEL_PADDING + 2 * Parameters.LABEL_MARKER_RADIUS + 2 * Parameters.LABEL_DOUBLE_PADDING
-                 + Parameters.SET_LABEL_MAX_WIDTH
-                 + Parameters.LABEL_PADDING,
-                 linedText.length * textHeight() + Parameters.LABEL_DOUBLE_PADDING);
+        return PVector.v(OverviewConstants.LABEL_PADDING + 2 * OverviewConstants.LABEL_MARKER_RADIUS + 2 * OverviewConstants.LABEL_DOUBLE_PADDING
+                 + OverviewConstants.SET_LABEL_MAX_WIDTH
+                 + OverviewConstants.LABEL_PADDING,
+                 linedText.length * textHeight() + OverviewConstants.LABEL_DOUBLE_PADDING);
     }
 
     @Override
@@ -92,11 +92,11 @@ public class SetLabel extends SetRepresentation {
         
         // Set marker.
         if(!opened && hL) {
-            translate(0, !opened && hL ? 2 * Parameters.LABEL_MARKER_RADIUS : 0);
+            translate(0, !opened && hL ? 2 * OverviewConstants.LABEL_MARKER_RADIUS : 0);
         } else if(!opened) {
             translate(0, 0);
         } else {
-            translate(Parameters.LABEL_PADDING + Parameters.LABEL_MARKER_RADIUS, 0.5 * dim.y);
+            translate(OverviewConstants.LABEL_PADDING + OverviewConstants.LABEL_MARKER_RADIUS, 0.5 * dim.y);
         }
 
         final Network network = visualization.model.activeNetworkProperty().get();
@@ -105,7 +105,7 @@ public class SetLabel extends SetRepresentation {
         double maxScoreExp = exponent(network.maxAnnotationScore);
         double scoreExp = exponent(element.score);
         double normScore = (scoreExp - maxScoreExp) / (minScoreExp - maxScoreExp);
-        double radius = Parameters.SCORE_MIN_RADIUS + (maxRadius - Parameters.SCORE_MIN_RADIUS) * normScore;
+        double radius = OverviewConstants.SCORE_MIN_RADIUS + (maxRadius - OverviewConstants.SCORE_MIN_RADIUS) * normScore;
         color(hL ? org.cwi.examine.graphics.draw.Parameters.containmentColor : Colors.grey(0.7));
         fillEllipse(0, 0, radius, radius);
         
@@ -136,7 +136,7 @@ public class SetLabel extends SetRepresentation {
     
     private class SetText extends SetRepresentation {
         
-        public SetText(HAnnotation element) {
+        public SetText(NetworkAnnotation element) {
             super(SetLabel.this.visualization, element);
         }
 
@@ -155,20 +155,20 @@ public class SetLabel extends SetRepresentation {
             color(hL ? org.cwi.examine.graphics.draw.Parameters.containmentColor :
                  selected ? visualization.setColors.color(element) : Colors.grey(1f),
                  selected || hL ? 1f : 0f);
-            fillRect(0f, 0f, dim.x, dim.y, Parameters.LABEL_ROUNDING);
+            fillRect(0f, 0f, dim.x, dim.y, OverviewConstants.LABEL_ROUNDING);
             
             // Score label.
             color(hL ? org.cwi.examine.graphics.draw.Parameters.textContainedColor :
                   selected ? org.cwi.examine.graphics.draw.Parameters.textHighlightColor : org.cwi.examine.graphics.draw.Parameters.textColor);
 
             textFont(org.cwi.examine.graphics.draw.Parameters.noteFont);
-            text(shortExponent, 2 * Parameters.LABEL_MARKER_RADIUS + 3, 0.5 * dim.y - Parameters.LABEL_MARKER_RADIUS);
+            text(shortExponent, 2 * OverviewConstants.LABEL_MARKER_RADIUS + 3, 0.5 * dim.y - OverviewConstants.LABEL_MARKER_RADIUS);
 
             // Set label.
             picking();
             textFont(org.cwi.examine.graphics.draw.Parameters.labelFont);
-            translate(Parameters.LABEL_PADDING + 2 * Parameters.LABEL_MARKER_RADIUS + 2 * Parameters.LABEL_DOUBLE_PADDING,
-                      Parameters.LABEL_PADDING);
+            translate(OverviewConstants.LABEL_PADDING + 2 * OverviewConstants.LABEL_MARKER_RADIUS + 2 * OverviewConstants.LABEL_DOUBLE_PADDING,
+                      OverviewConstants.LABEL_PADDING);
             for(String line: linedText) {
                 text(line);
                 translate(0, textHeight());

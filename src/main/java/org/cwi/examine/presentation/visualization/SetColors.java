@@ -1,27 +1,23 @@
 package org.cwi.examine.presentation.visualization;
 
-import java.awt.Color;
-
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import org.cwi.examine.model.NetworkAnnotation;
 
-import org.cwi.examine.model.HAnnotation;
-import org.cwi.examine.model.Model;
+import java.awt.*;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+// Selected set to getColor map.
+public class SetColors implements ListChangeListener<NetworkAnnotation> {
 
-// Selected set to color map.
-public class SetColors implements ListChangeListener<HAnnotation> {
-    private final Model model;
-    private final Map<HAnnotation, Color> predefinedColorMap;  // Predefined protein set to color mapping.
-    private final Map<HAnnotation, Color> colorMap;            // Dynamic protein set to color mapping.
+    private final ObservableList<NetworkAnnotation> activeAnnotations = FXCollections.observableArrayList();
+
+    private final Map<NetworkAnnotation, Color> predefinedColorMap;  // Predefined protein set to getColor mapping.
+    private final Map<NetworkAnnotation, Color> colorMap;            // Dynamic protein set to getColor mapping.
     private final ArrayList<Color> availableColors;            // Available set colors.
     
-    // Source color pool.
+    // Source getColor pool.
     public static final Color[] palette = new Color[] {
             new Color(141, 211, 199),
             new Color(255, 255, 179),
@@ -35,8 +31,7 @@ public class SetColors implements ListChangeListener<HAnnotation> {
             new Color(255, 237, 111)
     };
     
-    public SetColors(final Model model) {
-        this.model = model;
+    public SetColors() {
 
         colorMap = new HashMap<>();
         availableColors = new ArrayList<>();
@@ -46,39 +41,44 @@ public class SetColors implements ListChangeListener<HAnnotation> {
         predefinedColorMap = new HashMap<>();
         
         // Listen to model and parameter changes.
-        model.activeAnnotationListProperty().addListener(this);
+        activeAnnotations.addListener(this);
     }
 
-    public void onChanged(ListChangeListener.Change<? extends HAnnotation> change) {
-        Set<HAnnotation> newActiveSets = new HashSet<>();
-        newActiveSets.addAll(model.activeAnnotationListProperty());
+    public void onChanged(ListChangeListener.Change<? extends NetworkAnnotation> change) {
+        Set<NetworkAnnotation> newActiveSets = new HashSet<>();
+        newActiveSets.addAll(activeAnnotations);
         newActiveSets.removeAll(colorMap.keySet());
         newActiveSets.removeAll(predefinedColorMap.keySet());
         
-        Set<HAnnotation> newDormantSets = new HashSet<>();
+        Set<NetworkAnnotation> newDormantSets = new HashSet<>();
         newDormantSets.addAll(colorMap.keySet());
-        newDormantSets.removeAll(model.activeAnnotationListProperty());
+        newDormantSets.removeAll(activeAnnotations);
         newDormantSets.removeAll(predefinedColorMap.keySet());
         
         // Assign colors to new active sets.
-        for(HAnnotation pS: newActiveSets) {
+        for(NetworkAnnotation pS: newActiveSets) {
             colorMap.put(pS, availableColors.remove(0));
         }
         
         // Release colors of new dormant sets.
-        for(HAnnotation pS: newDormantSets) {
+        for(NetworkAnnotation pS: newDormantSets) {
             availableColors.add(colorMap.remove(pS));
         }
     }
     
-    // Get the color that has been assigned to the given set.
-    public Color color(HAnnotation proteinSet) {
-        Color result = predefinedColorMap.get(proteinSet);
+    // Get the getColor that has been assigned to the given set.
+    public Color getColor(NetworkAnnotation annotation) {
+        Color result = predefinedColorMap.get(annotation);
         
         if(result == null) {
-            result = colorMap.get(proteinSet);
+            result = colorMap.get(annotation);
         }
         
         return result;
     }
+
+    public ObservableList<NetworkAnnotation> getActiveAnnotations() {
+        return activeAnnotations;
+    }
+
 }

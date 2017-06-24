@@ -1,16 +1,16 @@
 package org.cwi.examine.presentation.visualization.layout;
 
 import org.cwi.examine.graphics.PVector;
-import org.cwi.examine.model.HAnnotation;
-import org.cwi.examine.model.HNode;
+import org.cwi.examine.model.NetworkAnnotation;
+import org.cwi.examine.model.NetworkNode;
 import org.cwi.examine.model.Network;
 import org.cwi.examine.graphics.StaticGraphics;
+import org.cwi.examine.presentation.main.MainViewModel;
 import org.cwi.examine.presentation.visualization.layout.dwyer.cola.Descent;
 import org.cwi.examine.presentation.visualization.layout.dwyer.vpsc.Constraint;
 import org.cwi.examine.presentation.visualization.layout.dwyer.vpsc.Solver;
 import org.cwi.examine.presentation.visualization.layout.dwyer.vpsc.Variable;
-import org.cwi.examine.model.Model;
-import org.cwi.examine.presentation.visualization.Parameters;
+import org.cwi.examine.presentation.visualization.OverviewConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
@@ -33,20 +33,20 @@ public class Layout {
     
     // Network and set topology.
     public Network network;
-    public List<HAnnotation> sets;
-    public final HNode[] nodes;
-    public final Map<HNode, List<HAnnotation>> nodeMemberships;
-    private final Model model;
+    public List<NetworkAnnotation> sets;
+    public final NetworkNode[] nodes;
+    public final Map<NetworkNode, List<NetworkAnnotation>> nodeMemberships;
+    private final MainViewModel model;
     
     // Spanning set graphs.
-    private WeightedGraph<HNode, DefaultEdge> minDistGraph;
-    private List<Graph<HNode, DefaultEdge>> spanGraphs;
+    private WeightedGraph<NetworkNode, DefaultEdge> minDistGraph;
+    private List<Graph<NetworkNode, DefaultEdge>> spanGraphs;
     public WeightedGraph<RichNode, RichEdge> richGraph;
     private WeightedGraph<RichNode, RichEdge> extRichGraph;
     private RichNode[] richNodes;
     
     // Descent layout.
-    private Map<HNode, Integer> index;
+    private Map<NetworkNode, Integer> index;
     private Map<RichNode, Integer> richIndex;
     private double[] baseDilations;
     private double[] radii;
@@ -59,7 +59,7 @@ public class Layout {
     // Derived metrics.
     public PVector dimensions;
     
-    public Layout(Network network, Model model, Layout oldLayout) {
+    public Layout(Network network, MainViewModel model, Layout oldLayout) {
         this.network = network;
         this.model = model;
         
@@ -69,13 +69,13 @@ public class Layout {
         Collections.sort(this.sets, (s1, s2) -> s1.elements.size() - s2.elements.size());
         
         // Invert set membership for vertices.
-        nodes = network.graph.vertexSet().toArray(new HNode[] {});
+        nodes = network.graph.vertexSet().toArray(new NetworkNode[] {});
         nodeMemberships = new HashMap<>();
-        for(HNode n: nodes) {
+        for(NetworkNode n: nodes) {
             nodeMemberships.put(n, new ArrayList<>());
         }
-        for(HAnnotation s: sets) {
-            for(HNode n: s.elements) {
+        for(NetworkAnnotation s: sets) {
+            for(NetworkNode n: s.elements) {
                 nodeMemberships.get(n).add(s);
             }
         }
@@ -112,8 +112,8 @@ public class Layout {
                 for(int j = i + 1; j < vN; j++) {
                     double dil2 = baseDilations[j];
                     mD[i][j] = mD[j][i] =
-                        dil1 + dil2 + 2 * Parameters.NODE_SPACE +
-                        Parameters.RIBBON_EXTENT * membershipDiscrepancy(nodes[i], nodes[j]);
+                        dil1 + dil2 + 2 * OverviewConstants.NODE_SPACE +
+                        OverviewConstants.RIBBON_EXTENT * membershipDiscrepancy(nodes[i], nodes[j]);
                 }
             }
             
@@ -185,7 +185,7 @@ public class Layout {
     }
     
     // Position of the given node, (0,0) iff null.
-    public PVector position(HNode node) {
+    public PVector position(NetworkNode node) {
         PVector result;
         
         if(index == null) {
@@ -216,14 +216,14 @@ public class Layout {
         int vN = nodes.length;
         
         // Minimum guaranteed distance graph.
-        minDistGraph = new SimpleWeightedGraph<HNode, DefaultEdge>(DefaultWeightedEdge.class);
-        for(HNode v: network.graph.vertexSet()) {
+        minDistGraph = new SimpleWeightedGraph<NetworkNode, DefaultEdge>(DefaultWeightedEdge.class);
+        for(NetworkNode v: network.graph.vertexSet()) {
             minDistGraph.addVertex(v);
         }
         for(DefaultEdge e: network.graph.edgeSet()) {
-            HNode s = network.graph.getEdgeSource(e);
+            NetworkNode s = network.graph.getEdgeSource(e);
             int sI = index.get(s);
-            HNode t = network.graph.getEdgeTarget(e);
+            NetworkNode t = network.graph.getEdgeTarget(e);
             int tI = index.get(t);
             DefaultEdge nE = minDistGraph.addEdge(s, t);
             minDistGraph.setEdgeWeight(nE, EDGE_SPACE + mD[sI][tI]);
@@ -238,18 +238,18 @@ public class Layout {
                 D[i][j] = D[j][i] = paths.shortestDistance(nodes[i], nodes[j]);
         
         // Spanning graph per set.
-        spanGraphs = new ArrayList<Graph<HNode, DefaultEdge>>();
-        for(HAnnotation set: sets) {
-            SimpleWeightedGraph<HNode, DefaultEdge> weightedSubGraph =
-                    new SimpleWeightedGraph<HNode, DefaultEdge>(DefaultWeightedEdge.class);
-            for(HNode v: set.elements) {
+        spanGraphs = new ArrayList<Graph<NetworkNode, DefaultEdge>>();
+        for(NetworkAnnotation set: sets) {
+            SimpleWeightedGraph<NetworkNode, DefaultEdge> weightedSubGraph =
+                    new SimpleWeightedGraph<NetworkNode, DefaultEdge>(DefaultWeightedEdge.class);
+            for(NetworkNode v: set.elements) {
                 weightedSubGraph.addVertex(v);
             }
             Set<DefaultEdge> coreEdges = new HashSet<DefaultEdge>();
             for(int i = 0; i < set.elements.size(); i++) {
-                HNode s = set.elements.get(i);
+                NetworkNode s = set.elements.get(i);
                 for(int j = i + 1; j < set.elements.size(); j++) {
-                    HNode t = set.elements.get(j);
+                    NetworkNode t = set.elements.get(j);
                     DefaultEdge nE = weightedSubGraph.addEdge(s, t);
                     
                     // Guarantee MST along already present edges.
@@ -260,9 +260,9 @@ public class Layout {
             }
             
             // Combine spanning and core edges into set spanning graph.
-            SimpleGraph<HNode, DefaultEdge> spanGraph =
-                    new SimpleGraph<HNode, DefaultEdge>(DefaultEdge.class);
-            for(HNode v: set.elements) {
+            SimpleGraph<NetworkNode, DefaultEdge> spanGraph =
+                    new SimpleGraph<NetworkNode, DefaultEdge>(DefaultEdge.class);
+            for(NetworkNode v: set.elements) {
                 spanGraph.addVertex(v);
             }
             for(DefaultEdge e: coreEdges) {
@@ -272,7 +272,7 @@ public class Layout {
             
             if(!weightedSubGraph.edgeSet().isEmpty()) {
                 Set<DefaultEdge> spanningEdges =
-                        new PrimMinimumSpanningTree<HNode, DefaultEdge>(weightedSubGraph)
+                        new PrimMinimumSpanningTree<NetworkNode, DefaultEdge>(weightedSubGraph)
                             .getMinimumSpanningTreeEdgeSet();
                 for(DefaultEdge e: spanningEdges) {
                     spanGraph.addEdge(weightedSubGraph.getEdgeSource(e),
@@ -289,7 +289,7 @@ public class Layout {
         
         // Base nodes.
         for(int i = 0; i < nodes.length; i++) {
-            HNode n = nodes[i];
+            NetworkNode n = nodes[i];
             RichNode rN = new RichNode(n);
             rN.memberships.addAll(nodeMemberships.get(n));
             richGraph.addVertex(rN);
@@ -304,8 +304,8 @@ public class Layout {
         }
         // Add all set span edges.
         for(int i = 0; i < sets.size(); i++) {
-            HAnnotation s = sets.get(i);
-            Graph<HNode, DefaultEdge> sG = spanGraphs.get(i);
+            NetworkAnnotation s = sets.get(i);
+            Graph<NetworkNode, DefaultEdge> sG = spanGraphs.get(i);
             
             for(DefaultEdge e: sG.edgeSet()) {
                 RichNode rSN = new RichNode(sG.getEdgeSource(e));
@@ -337,7 +337,7 @@ public class Layout {
         extRichGraph = new SimpleWeightedGraph<RichNode, RichEdge>(RichEdge.class);
         // Base nodes.
         for(int i = 0; i < nodes.length; i++) {
-            HNode n = nodes[i];
+            NetworkNode n = nodes[i];
             RichNode rN = new RichNode(n);
             richNodes[i] = rN;
             richIndex.put(rN, i);
@@ -369,29 +369,29 @@ public class Layout {
     }
     
     // Dimensions of drawn node label.
-    public static PVector labelDimensions(HNode node, boolean padding) {
+    public static PVector labelDimensions(NetworkNode node, boolean padding) {
         double height = textHeight();
         
         StaticGraphics.textFont(org.cwi.examine.graphics.draw.Parameters.labelFont);
         return PVector.v(textWidth(node.toString()) /*+ NODE_OUTLINE*/ + (padding ? height : 0),
-                 height + Parameters.NODE_OUTLINE);
+                 height + OverviewConstants.NODE_OUTLINE);
     }
     
-    public static PVector labelSpacedDimensions(HNode node) {
+    public static PVector labelSpacedDimensions(NetworkNode node) {
         return PVector.add(labelDimensions(node, true),
-                           PVector.v(Parameters.NODE_OUTLINE + Parameters.NODE_SPACE, Parameters.NODE_OUTLINE + Parameters.NODE_SPACE));
+                           PVector.v(OverviewConstants.NODE_OUTLINE + OverviewConstants.NODE_SPACE, OverviewConstants.NODE_OUTLINE + OverviewConstants.NODE_SPACE));
     }
     
     // Set membership discrepancy between two nodes.
-    private int membershipDiscrepancy(HNode n1, HNode n2) {
+    private int membershipDiscrepancy(NetworkNode n1, NetworkNode n2) {
         int discr = 0;
         
-        List<HAnnotation> sets1 = nodeMemberships.get(n1);
-        List<HAnnotation> sets2 = nodeMemberships.get(n2);
-        for(HAnnotation s: sets1)
+        List<NetworkAnnotation> sets1 = nodeMemberships.get(n1);
+        List<NetworkAnnotation> sets2 = nodeMemberships.get(n2);
+        for(NetworkAnnotation s: sets1)
             if(!s.set.contains(n2))
                 discr++;
-        for(HAnnotation s: sets2)
+        for(NetworkAnnotation s: sets2)
             if(!s.set.contains(n1))
                 discr++;
         
@@ -513,12 +513,12 @@ public class Layout {
     }
     
     public static class RichNode {
-        public HNode element;
-        public List<HAnnotation> memberships;
+        public NetworkNode element;
+        public List<NetworkAnnotation> memberships;
 
-        public RichNode(HNode element) {
+        public RichNode(NetworkNode element) {
             this.element = element;
-            this.memberships = new ArrayList<HAnnotation>();
+            this.memberships = new ArrayList<NetworkAnnotation>();
         }
 
         @Override
@@ -535,11 +535,11 @@ public class Layout {
     
     public static class RichEdge extends DefaultWeightedEdge {
         public boolean core;            // Whether edge is part of original graph.
-        public List<HAnnotation> memberships;  // Set memberships.
+        public List<NetworkAnnotation> memberships;  // Set memberships.
         public RichNode subNode;        // Optional dummy node that divides edge in extended graph.
         
         public RichEdge() {
-            memberships = new ArrayList<HAnnotation>();
+            memberships = new ArrayList<NetworkAnnotation>();
         }
     }
 }

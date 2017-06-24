@@ -6,16 +6,16 @@ import java.util.Set;
 /**
  * Represents a node of interest.
  */
-public class HNode extends HElement {
+public class NetworkNode extends NetworkElement {
 
-    public final Set<HAnnotation> annotations;
+    public final Set<NetworkAnnotation> annotations;
 
-    public HNode(final String id, final String name, final String url, final double score) {
+    public NetworkNode(final String id, final String name, final String url, final double score) {
         super(id, name, url, score);
         this.annotations = new HashSet<>();
     }
 
-    public void addAnnotation(HAnnotation annotation) {
+    public void addAnnotation(NetworkAnnotation annotation) {
         this.annotations.add(annotation);
     }
 

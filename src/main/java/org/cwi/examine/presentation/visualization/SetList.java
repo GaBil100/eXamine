@@ -9,17 +9,17 @@ import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.StaticGraphics;
 import org.cwi.examine.graphics.draw.Layout;
 import org.cwi.examine.graphics.draw.Representation;
-import org.cwi.examine.model.HCategory;
+import org.cwi.examine.model.NetworkCategory;
 
 import java.util.List;
 
 // Visual list of significantly expressed GO terms of a specific domain.
-public class SetList extends Representation<HCategory> {
+public class SetList extends Representation<NetworkCategory> {
     private final Visualization visualization;
     private final List<SetLabel> labels;
     private int positionScroll;                     // Internal set list scroll.
     
-    public SetList(final Visualization visualization, HCategory element, List<SetLabel> labels) {
+    public SetList(final Visualization visualization, NetworkCategory element, List<SetLabel> labels) {
         super(element);
 
         this.visualization = visualization;
@@ -39,7 +39,7 @@ public class SetList extends Representation<HCategory> {
         
         double space = org.cwi.examine.graphics.draw.Parameters.spacing;
         PVector domainBounds = PVector.v(0.75 * StaticGraphics.textHeight() + StaticGraphics.textWidth(element.toString()),
-                                 StaticGraphics.textHeight() + space + Parameters.LABEL_BAR_HEIGHT + space);
+                                 StaticGraphics.textHeight() + space + OverviewConstants.LABEL_BAR_HEIGHT + space);
         
         if(isOpened()) {
             double termHeight = Layout.bounds(labels).y;
@@ -125,11 +125,11 @@ public class SetList extends Representation<HCategory> {
         PVector topBarPos = PVector.add(labelPos,
                                         PVector.v(0, taggedLabels.isEmpty() ? 0 : StaticGraphics.textHeight()));
         PVector topListPos = PVector.add(topBarPos, PVector.v(0,
-                    skipCount > 0 ? Parameters.LABEL_BAR_HEIGHT + org.cwi.examine.graphics.draw.Parameters.spacing : 0));
+                    skipCount > 0 ? OverviewConstants.LABEL_BAR_HEIGHT + org.cwi.examine.graphics.draw.Parameters.spacing : 0));
         PVector bottomBarPos = null;
         
         double barIncrement = Math.min(
-            2 * Parameters.LABEL_MARKER_RADIUS + 2,
+            2 * OverviewConstants.LABEL_MARKER_RADIUS + 2,
             dim.x / (double) remainderLabels.size()
         );
         
@@ -139,8 +139,8 @@ public class SetList extends Representation<HCategory> {
         for(i = 0; i < skipCount && i < remainderLabels.size(); i++) {
             SetLabel label = remainderLabels.get(i);
             label.opened = false;
-            label.topLeft(PVector.v(topBarPos.x + Parameters.LABEL_MARKER_RADIUS + i * barIncrement,
-                            topBarPos.y + Parameters.LABEL_MARKER_RADIUS));
+            label.topLeft(PVector.v(topBarPos.x + OverviewConstants.LABEL_MARKER_RADIUS + i * barIncrement,
+                            topBarPos.y + OverviewConstants.LABEL_MARKER_RADIUS));
         }
         
         // Place in mid section, as full.
@@ -151,7 +151,7 @@ public class SetList extends Representation<HCategory> {
             
             label.opened =
                 topLeft.y + labelPos.y + 2 * labelDim.y +
-                Parameters.LABEL_BAR_HEIGHT + org.cwi.examine.graphics.draw.Parameters.spacing < Parameters.sceneHeight();
+                OverviewConstants.LABEL_BAR_HEIGHT + org.cwi.examine.graphics.draw.Parameters.spacing < OverviewConstants.sceneHeight();
             
             if(label.opened) {
                 label.topLeft(labelPos);
@@ -162,8 +162,8 @@ public class SetList extends Representation<HCategory> {
                     bottomBarPos = labelPos;
                 }
                 
-                label.topLeft(PVector.v(topBarPos.x + Parameters.LABEL_MARKER_RADIUS + i * barIncrement,
-                                bottomBarPos.y + 2 * Parameters.LABEL_MARKER_RADIUS));
+                label.topLeft(PVector.v(topBarPos.x + OverviewConstants.LABEL_MARKER_RADIUS + i * barIncrement,
+                                bottomBarPos.y + 2 * OverviewConstants.LABEL_MARKER_RADIUS));
             }
             
             labelPos = PVector.add(labelPos, PVector.v(0, labelDim.y + 2));

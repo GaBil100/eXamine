@@ -5,8 +5,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.cwi.examine.graphics.Colors;
 import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.StaticGraphics;
-import org.cwi.examine.model.HAnnotation;
-import org.cwi.examine.model.HNode;
+import org.cwi.examine.model.NetworkAnnotation;
+import org.cwi.examine.model.NetworkNode;
 import org.cwi.examine.presentation.visualization.SetRepresentation;
 import org.cwi.examine.presentation.visualization.Util;
 import org.cwi.examine.presentation.visualization.Visualization;
@@ -29,13 +29,13 @@ public class SetContour extends SetRepresentation {
     public final int index;
     
     // Protein set.
-    public final HAnnotation set;
+    public final NetworkAnnotation set;
     
     // Body and outline shapes of set.
     public final Geometry body, outline;
     public final Shape bodyShape, outlineShape;
     
-    public SetContour(final Visualization visualization, HAnnotation set, int index, Geometry body, Geometry outline) {
+    public SetContour(final Visualization visualization, NetworkAnnotation set, int index, Geometry body, Geometry outline) {
         super(visualization, set);
 
         this.set = set;
@@ -98,12 +98,12 @@ public class SetContour extends SetRepresentation {
     @Override
     public void beginHovered() {
         // Highlight proteins term intersection.
-        Set<HNode> hP = new HashSet<>();
+        Set<NetworkNode> hP = new HashSet<>();
         hP.addAll(element.elements);
         visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
         
         // Highlight annotation annotations that contain all elements of this set.
-        Set<HAnnotation> hT = new HashSet<>();
+        Set<NetworkAnnotation> hT = new HashSet<>();
         hT.addAll(element.elements.get(0).annotations);
         for(int i = 1; i < element.elements.size(); i++) {
             hT.retainAll(element.elements.get(i).annotations);

@@ -1,9 +1,11 @@
 package org.cwi.examine.presentation.visualization;
 
 import com.sun.javafx.collections.ObservableSetWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.cwi.examine.graphics.draw.Representation;
-import org.cwi.examine.model.HNode;
-import org.cwi.examine.model.HAnnotation;
+import org.cwi.examine.model.NetworkNode;
+import org.cwi.examine.model.NetworkAnnotation;
 
 import java.awt.Desktop;
 import java.awt.event.MouseEvent;
@@ -17,31 +19,29 @@ import java.util.logging.Logger;
 import static org.cwi.examine.graphics.StaticGraphics.mouseEvent;
 
 // ProteinSet representation.
-public abstract class SetRepresentation extends Representation<HAnnotation> {
+public abstract class SetRepresentation extends Representation<NetworkAnnotation> {
 
-    protected final Visualization visualization;
-    
+    private final ObservableList<NetworkAnnotation> highlightedAnnotations = FXCollections.observableArrayList();
+
     // Base constructor.
-    public SetRepresentation(final Visualization visualization, HAnnotation element) {
+    public SetRepresentation(NetworkAnnotation element) {
         super(element);
-
-        this.visualization = visualization;
     }
 
     public boolean highlight() {
-        return visualization.model.highlightedAnnotations().get().contains(element);
+        return highlightedAnnotations.contains(element);
     }
 
     @Override
     // Highlight term and its member proteins.
     public void beginHovered() {
-        Set<HAnnotation> hT = new HashSet<>();
+        Set<NetworkAnnotation> hT = new HashSet<>();
         hT.add(element);
-        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
+        highlightedAnnotations.set(new ObservableSetWrapper<>(hT));
         
-        Set<HNode> hP = new HashSet<>();
+        Set<NetworkNode> hP = new HashSet<>();
         hP.addAll(element.elements);
-        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
+        visualization.model.highlightedNodesProperty.set(new ObservableSetWrapper<>(hP));
     }
 
     @Override

@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * An set of nodes.
+ * Annotation of a group of network nodes.
  */
-public class HAnnotation extends HElement {
+public class NetworkAnnotation extends NetworkElement {
 
-    public final List<HNode> elements = new ArrayList<>();
-    public final Set<HNode> set = new HashSet<>();
+    public final List<NetworkNode> elements = new ArrayList<>();
+    public final Set<NetworkNode> set = new HashSet<>();
 
-    public HAnnotation(final String identifier, final String name, final String url, final double score) {
+    public NetworkAnnotation(final String identifier, final String name, final String url, final double score) {
         super(identifier, name, url, score);
     }
 
-    public void addMember(final HNode node) {
+    public void addMember(final NetworkNode node) {
         elements.add(node);
         set.add(node);
     }
@@ -43,7 +43,7 @@ public class HAnnotation extends HElement {
         if(getClass() != obj.getClass()) {
             return false;
         }
-        final HAnnotation other = (HAnnotation) obj;
+        final NetworkAnnotation other = (NetworkAnnotation) obj;
         if(!this.name.equals(other.name)) {
             return false;
         }

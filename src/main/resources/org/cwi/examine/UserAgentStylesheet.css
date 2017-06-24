@@ -1527,67 +1527,38 @@ is being used to size a border should also be in pixels.
  ******************************************************************************/
 
 .tab-pane {
-    -fx-tab-min-height: 1.8333em; /* 22 */
-    -fx-tab-max-height: 1.8333em; /* 22 */
+    -fx-tab-min-height: 1.8333em;
+    -fx-tab-max-height: 1.8333em;
+}
+.tab-pane > .tab-header-area {
+    -fx-border-width:   0px 0px 1px 0px;
+    -fx-border-color:   -base-intensity-low;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: -fx-text-base-color;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab {
-    -fx-background-insets: 0 1 1 0, 1 2 1 1, 2 3 1 2;
-    -fx-background-radius: 3 3 0 0, 2 2 0 0, 1 1 0 0;
-    -fx-padding: 0.083333em 0.5em 0.0769em 0.5em; /* 1 6 0.99 6 */
-}
-.tab-pane > .tab-header-area > .headers-region > .tab:top {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-}
-.tab-pane > .tab-header-area > .headers-region > .tab:right {
-    -fx-background-color: -fx-outer-border, -fx-inner-border-bottomup, -fx-body-color-bottomup;
-}
-.tab-pane > .tab-header-area > .headers-region > .tab:bottom {
-    -fx-background-color: -fx-outer-border, -fx-inner-border-bottomup, -fx-body-color-bottomup;
-}
-.tab-pane > .tab-header-area > .headers-region > .tab:left {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-padding: 0.083333em 0.5em 0.0769em 0.5em;
+    -fx-border-color: -base-intensity-mid -base-intensity-mid transparent -base-intensity-mid;
+    -fx-border-width: 1px;
+    -fx-border-insets:  0px 0px 0px 4px;
+    -fx-background-insets: 0px 0px 0px 4px;
+    -fx-cursor: hand;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab:hover {
     -fx-color: -fx-hover-base;
+    -fx-background-color: -fx-hover-base;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab:hover:selected {
+    -fx-color: -fx-base;
+    -fx-background-color: -fx-background;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-background;
-    -fx-background-insets: 0 1 1 0, 1 2 0 1, 2 3 0 2;
-}
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
-    -fx-border-width: 1, 1;
-    -fx-border-color: -fx-focus-color, -fx-faint-focus-color;
-    -fx-border-insets: -4 -4 -6 -5, -2 -2 -5 -3;
-    -fx-border-radius: 2, 1; /* looks sharper if outer border has a tighter radius (2 instead of 3) */
-}
-.tab-pane:focused > .tab-header-area > .headers-region > .tab:bottom:selected .focus-indicator {
-    -fx-border-insets: -6 -5 -4 -4, -5 -3 -2 -2;
+    -fx-border-color: -base-intensity-low -base-intensity-low -fx-background -base-intensity-low;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab:disabled:hover {
     -fx-color: -fx-base;
-}
-.tab-pane > .tab-header-area > .tab-header-background {
-    /* TODO should not be using text-box-border I think? */
-    -fx-background-color:
-        -fx-outer-border,
-        -fx-text-box-border,
-        linear-gradient(from 0px 0px to 0px 5px, -fx-text-box-border, derive(-fx-text-box-border, 30%));
-}
-.tab-pane:top > .tab-header-area > .tab-header-background {
-    -fx-background-insets: 0, 0 0 1 0, 1;
-}
-.tab-pane:bottom > .tab-header-area > .tab-header-background {
-    -fx-background-insets: 0, 1 0 0 0, 1;
-}
-.tab-pane:left > .tab-header-area > .tab-header-background {
-    -fx-background-insets: 0, 0 1 0 0, 1;
-}
-.tab-pane:right > .tab-header-area > .tab-header-background {
-    -fx-background-insets: 0, 0 0 0 1, 1;
 }
 .tab-pane:top > .tab-header-area {
     /*-fx-padding: 0.416667em 0.166667em 0.0em 0.416667em; *//* 5 2 0 5 */

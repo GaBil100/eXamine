@@ -1,12 +1,16 @@
 package org.cwi.examine.presentation.visualization;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.cwi.examine.graphics.Application;
 import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.draw.Layout;
 import org.cwi.examine.graphics.draw.Representation;
-import org.cwi.examine.model.HAnnotation;
-import org.cwi.examine.model.HCategory;
-import org.cwi.examine.model.Model;
+import org.cwi.examine.model.Network;
+import org.cwi.examine.model.NetworkAnnotation;
+import org.cwi.examine.model.NetworkCategory;
 import org.cwi.examine.presentation.visualization.overview.Overview;
 
 import java.awt.*;
@@ -20,20 +24,21 @@ import static org.cwi.examine.graphics.StaticGraphics.*;
 // Visualization module.
 public class Visualization extends Application {
 
-    public final Model model;
+    private ObjectProperty<Network> networkProperty = new SimpleObjectProperty<>();
+    private ObservableList<NetworkCategory> openedCategories = FXCollections.observableArrayList();
+
     private List<SetList> setLists;  // GO Term lists (per domain).
     private Overview overview;       // Protein SOM overview.
 
     public SetColors setColors;      // Protein set coloring.
 
-    public Visualization(final Model model) {
-        this.model = model;
+    public Visualization() {
 
-        setColors = new SetColors(model);
+        setColors = new SetColors();
 
         // Protein set listing, update on selection change.
         setLists = new ArrayList<>();
-        model.activeNetworkProperty().addListener((observable, old, activeNetwork) -> setLists.clear());
+        networkProperty.addListener((observable, old, activeNetwork) -> setLists.clear());
 
         // Overview at bottom, dominant.
         overview = new Overview(this);
@@ -46,10 +51,10 @@ public class Visualization extends Application {
         try {
             // Construct set lists.
             if(setLists.isEmpty()) {
-                for(HCategory<HAnnotation> d: model.activeNetworkProperty().get().categories) {
+                for(NetworkCategory<NetworkAnnotation> d: networkProperty.get().categories) {
                     List<SetLabel> labels = new ArrayList<>();
 
-                    for(HAnnotation t: d.annotations) {
+                    for(NetworkAnnotation t: d.annotations) {
                         String text = t.toString();
                         labels.add(new SetLabel(this, t, text));
                     }
@@ -59,7 +64,7 @@ public class Visualization extends Application {
             }
             
             // Enforce side margins.
-            translate(Parameters.MARGIN, Parameters.MARGIN);
+            translate(OverviewConstants.MARGIN, OverviewConstants.MARGIN);
 
             // Black fill.
             color(Color.BLACK);
@@ -76,25 +81,24 @@ public class Visualization extends Application {
             List<SetList> openSl = new ArrayList<>();
             List<SetList> closedSl = new ArrayList<>();
             for(SetList sl: setLists) {
-                (model.openedCategoriesProperty().contains(sl.element) ? openSl : closedSl)
-                .add(sl);
+                (openedCategories.contains(sl.element) ? openSl : closedSl).add(sl);
             }
             sideSnippets.addAll(openSl);
             sideSnippets.addAll(closedSl);
 
-            Layout.placeBelowLeftToRight(shiftPos, sideSnippets, Parameters.MARGIN, Parameters.sceneHeight());
+            Layout.placeBelowLeftToRight(shiftPos, sideSnippets, OverviewConstants.MARGIN, OverviewConstants.sceneHeight());
             PVector termBounds = Layout.bounds(sideSnippets);
 
-            shiftPos.x += termBounds.x + Parameters.MARGIN;
+            shiftPos.x += termBounds.x + OverviewConstants.MARGIN;
         
             // Draw protein overview.
-            overview.bounds = PVector.v(Parameters.sceneWidth() - shiftPos.x - 2 * Parameters.MARGIN, Parameters.sceneHeight());
+            overview.bounds = PVector.v(OverviewConstants.sceneWidth() - shiftPos.x - 2 * OverviewConstants.MARGIN, OverviewConstants.sceneHeight());
             overview.topLeft(shiftPos);
             snippet(overview);
             
             // Occlude any overview overflow for side lists.
             color(Color.WHITE);
-            fillRect(-Parameters.MARGIN, -Parameters.MARGIN, shiftPos.x + Parameters.MARGIN, sketchHeight());
+            fillRect(-OverviewConstants.MARGIN, -OverviewConstants.MARGIN, shiftPos.x + OverviewConstants.MARGIN, sketchHeight());
             snippets(sideSnippets);
 
             try {
@@ -110,5 +114,17 @@ public class Visualization extends Application {
     // Terminate overview on disposal.
     public void stop() {
         overview.stop();
+    }
+
+    public ObjectProperty<Network> networkProperty() {
+        return networkProperty;
+    }
+
+    public ObservableList<NetworkAnnotation> getActiveAnnotations() {
+        return setColors.getActiveAnnotations();
+    }
+
+    public ObservableList<NetworkCategory> getOpenedCategories() {
+        return openedCategories;
     }
 }

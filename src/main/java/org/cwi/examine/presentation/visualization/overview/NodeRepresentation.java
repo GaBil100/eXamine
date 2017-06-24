@@ -7,10 +7,11 @@ import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.StaticGraphics;
 import org.cwi.examine.graphics.draw.Parameters;
 import org.cwi.examine.graphics.draw.Representation;
+import org.cwi.examine.presentation.visualization.OverviewConstants;
 import org.cwi.examine.presentation.visualization.Visualization;
 
-import org.cwi.examine.model.HNode;
-import org.cwi.examine.model.HAnnotation;
+import org.cwi.examine.model.NetworkNode;
+import org.cwi.examine.model.NetworkAnnotation;
 import org.cwi.examine.presentation.visualization.SetRepresentation;
 
 import java.util.HashSet;
@@ -29,11 +30,11 @@ import org.cwi.examine.presentation.visualization.layout.Layout;
 import org.jgrapht.graph.DefaultEdge;
 
 // Node representation.
-public class NodeRepresentation extends Representation<HNode> {
+public class NodeRepresentation extends Representation<NetworkNode> {
 
     private final Visualization visualization;
     
-    public NodeRepresentation(final Visualization visualization, HNode element) {
+    public NodeRepresentation(final Visualization visualization, NetworkNode element) {
         super(element);
 
         this.visualization = visualization;
@@ -59,7 +60,7 @@ public class NodeRepresentation extends Representation<HNode> {
                             //(Color) styleValue(BasicVisualLexicon.NODE_FILL_COLOR));
         StaticGraphics.fill(shape);
         
-        // Foreground outline with color coding.
+        // Foreground outline with getColor coding.
         StaticGraphics.color(Color.BLACK); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
         StaticGraphics.strokeWeight(2);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
         StaticGraphics.draw(shape);
@@ -67,7 +68,7 @@ public class NodeRepresentation extends Representation<HNode> {
         StaticGraphics.picking();
         StaticGraphics.color(highlight() ? Parameters.textContainedColor : Color.BLACK);
                             //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
-        StaticGraphics.text(element.toString(), 0.5 * (bounds.y + org.cwi.examine.presentation.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.presentation.visualization.Parameters.NODE_OUTLINE - 3);
+        StaticGraphics.text(element.toString(), 0.5 * (bounds.y + OverviewConstants.NODE_OUTLINE) - 3, bounds.y - OverviewConstants.NODE_OUTLINE - 3);
     }
     
     private Shape shape(PVector bounds) {
@@ -121,13 +122,13 @@ public class NodeRepresentation extends Representation<HNode> {
     }
     
 //    private <V> V styleValue(VisualProperty<V> property) {
-//        return Model.styleValue(property, element.cyRow);
+//        return MainViewModel.styleValue(property, element.cyRow);
 //    }
 
     @Override
     public void beginHovered() {
         // Highlight protein, its adjacent interactions, and its member terms.
-        Set<HNode> hP = new HashSet<>();
+        Set<NetworkNode> hP = new HashSet<>();
         hP.add(element);
         visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
         
@@ -138,7 +139,7 @@ public class NodeRepresentation extends Representation<HNode> {
         visualization.model.highlightedLinksProperty().set(new ObservableSetWrapper<>(hI));
         
         // Highlight member terms.
-        Set<HAnnotation> hT = new HashSet<>();
+        Set<NetworkAnnotation> hT = new HashSet<>();
         hT.addAll(element.annotations);
         visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
     }

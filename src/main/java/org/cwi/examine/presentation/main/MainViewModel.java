@@ -1,4 +1,4 @@
-package org.cwi.examine.model;
+package org.cwi.examine.presentation.main;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 import com.sun.javafx.collections.ObservableMapWrapper;
@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import org.cwi.examine.data.csv.DataSet;
+import org.cwi.examine.model.*;
 import org.cwi.examine.presentation.visualization.SetColors;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -16,28 +17,28 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Model of network with interaction states.
+ * MainViewModel of network with interaction states.
  */
-public final class Model {
+public final class MainViewModel {
 
     private final DataSet dataSet;
-    private final SetProperty<HCategory> openedCategories;
-    private final ListProperty<HCategory> orderedCategories;
-    private final SetProperty<HNode> highlightedNodes;
+    private final SetProperty<NetworkCategory> openedCategories;
+    private final ListProperty<NetworkCategory> orderedCategories;
+    private final SetProperty<NetworkNode> highlightedNodes;
     private final SetProperty<DefaultEdge> highlightedLinks;
-    private final SetProperty<HAnnotation> highlightedAnnotations;
+    private final SetProperty<NetworkAnnotation> highlightedAnnotations;
     private final ObjectProperty<Network> activeNetwork;
 
     // Included sets and the weight that has been assigned to them.
-    private final ObservableMap<HAnnotation, Double> activeSetMap;
+    private final ObservableMap<NetworkAnnotation, Double> activeSetMap;
 
     // List of active sets with a somewhat stable ordering.
-    private final ObservableList<HAnnotation> activeSetList;
+    private final ObservableList<NetworkAnnotation> activeSetList;
 
     // Selected set or protein.
-    private ObjectProperty<HElement> selected;
+    private ObjectProperty<NetworkElement> selected;
 
-    public Model(final DataSet dataSet) {
+    public MainViewModel(final DataSet dataSet) {
         this.dataSet = dataSet;
         this.openedCategories = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
         this.orderedCategories = new SimpleListProperty<>(new ObservableListWrapper<>(new ArrayList<>()));
@@ -62,9 +63,9 @@ public final class Model {
 
         // Update ordered category list.
         Runnable categoryObserver = () -> {
-            List<HCategory> openedCat = new ArrayList<>();
-            List<HCategory> closedCat = new ArrayList<>();
-            for(HCategory c: dataSet.superNetwork.get().categories) {
+            List<NetworkCategory> openedCat = new ArrayList<>();
+            List<NetworkCategory> closedCat = new ArrayList<>();
+            for(NetworkCategory c: dataSet.superNetwork.get().categories) {
                 (openedCategoriesProperty().contains(c) ? openedCat : closedCat).add(c);
             }
 
@@ -80,15 +81,15 @@ public final class Model {
         return dataSet;
     }
 
-    public SetProperty<HCategory> openedCategoriesProperty() {
+    public SetProperty<NetworkCategory> openedCategoriesProperty() {
         return openedCategories;
     }
 
-    public ListProperty<HCategory> orderedCategoriesProperty() {
+    public ListProperty<NetworkCategory> orderedCategoriesProperty() {
         return orderedCategories;
     }
 
-    public SetProperty<HNode> highlightedNodesProperty() {
+    public SetProperty<NetworkNode> highlightedNodesProperty() {
         return highlightedNodes;
     }
 
@@ -96,7 +97,7 @@ public final class Model {
         return highlightedLinks;
     }
 
-    public SetProperty<HAnnotation> highlightedAnnotations() {
+    public SetProperty<NetworkAnnotation> highlightedAnnotations() {
         return highlightedAnnotations;
     }
 
@@ -108,7 +109,7 @@ public final class Model {
      * Add set with an initial weight, report on success
      * (there is a maximum number of selected sets).
      */
-    public boolean add(HAnnotation proteinSet, double weight) {
+    public boolean add(NetworkAnnotation proteinSet, double weight) {
         boolean added = activeAnnotationListProperty().size() < SetColors.palette.length;
 
         if(added) {
@@ -122,7 +123,7 @@ public final class Model {
     /**
      * Remove set.
      */
-    public void remove(HAnnotation proteinSet) {
+    public void remove(NetworkAnnotation proteinSet) {
         activeAnnotationMapProperty().remove(proteinSet);
         activeAnnotationListProperty().remove(proteinSet);
     }
@@ -130,33 +131,33 @@ public final class Model {
     /**
      * Adjust the weight of a set by the given change.
      */
-    public void changeWeight(HAnnotation proteinSet, double weightChange) {
+    public void changeWeight(NetworkAnnotation proteinSet, double weightChange) {
         double currentWeight = activeAnnotationMapProperty().get(proteinSet);
         double newWeight = Math.max(1f, currentWeight + weightChange);
         activeAnnotationMapProperty().put(proteinSet, newWeight);
     }
 
-    public ObservableMap<HAnnotation, Double> activeAnnotationMapProperty() {
+    public ObservableMap<NetworkAnnotation, Double> activeAnnotationMapProperty() {
         return activeSetMap;
     }
 
-    public ObservableList<HAnnotation> activeAnnotationListProperty() {
+    public ObservableList<NetworkAnnotation> activeAnnotationListProperty() {
         return activeSetList;
     }
 
-    public ObjectProperty<HElement> selectedElementProperty() {
+    public ObjectProperty<NetworkElement> selectedElementProperty() {
         return selected;
     }
 
     /**
      * Select a set or protein, null iff no element is selected.
      */
-    public void select(HElement element) {
+    public void select(NetworkElement element) {
         selected.set(element);
 
         // Element is a set -> remove from or include in active sets.
-        if(element != null && element instanceof HAnnotation) {
-            HAnnotation elSet = (HAnnotation) element;
+        if(element != null && element instanceof NetworkAnnotation) {
+            NetworkAnnotation elSet = (NetworkAnnotation) element;
 
             if(activeAnnotationListProperty().contains(elSet)) {
                 remove(elSet);

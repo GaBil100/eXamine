@@ -37,24 +37,24 @@ public class DataSet {
     private Network loadNetwork() throws FileNotFoundException {
 
         // Nodes.
-        final Map<String, HNode> idToNode = new HashMap<>();
+        final Map<String, NetworkNode> idToNode = new HashMap<>();
         for (final File file : resolveFiles(".nodes")) {
             loadNodes(file, idToNode);
         }
-        final UndirectedGraph<HNode, DefaultEdge> superGraph = new Pseudograph<>(DefaultEdge.class);
+        final UndirectedGraph<NetworkNode, DefaultEdge> superGraph = new Pseudograph<>(DefaultEdge.class);
         idToNode.values().forEach(node -> superGraph.addVertex(node));
 
         // Annotations and categories.
-        final Map<String, HAnnotation> idToAnnotation = new HashMap<>();
-        final Map<String, List<HAnnotation>> categoryToAnnotations = new HashMap<>();
+        final Map<String, NetworkAnnotation> idToAnnotation = new HashMap<>();
+        final Map<String, List<NetworkAnnotation>> categoryToAnnotations = new HashMap<>();
         for (final File file : resolveFiles(".annotations")) {
             loadAnnotations(file, idToAnnotation, categoryToAnnotations);
         }
 
         // Categories.
-        final List<HCategory<HAnnotation>> categories = new ArrayList<>();
+        final List<NetworkCategory<NetworkAnnotation>> categories = new ArrayList<>();
         categoryToAnnotations.forEach((id, hAnnotations) ->
-                categories.add(new HCategory(id, hAnnotations)));
+                categories.add(new NetworkCategory(id, hAnnotations)));
 
         // Links, for both node <-> node and node <-> annotation.
         for (final File file : resolveFiles(".links")) {
@@ -64,7 +64,7 @@ public class DataSet {
         return new Network(superGraph, categories);
     }
 
-    private void loadNodes(final File file, final Map<String, HNode> idToNode)
+    private void loadNodes(final File file, final Map<String, NetworkNode> idToNode)
             throws FileNotFoundException {
 
         final Map<String, String> nodeColumns = new HashMap<>();
@@ -76,16 +76,16 @@ public class DataSet {
         final List<NodeEntry> nodeEntryBeans = csvToBean(file, NodeEntry.class, nodeColumns);
         //nodes.forEach(System.out::println);
 
-        final List<HNode> graphNodes = nodeEntryBeans.stream()
-                .map(nodeEntry -> new HNode(nodeEntry.getIdentifier(), nodeEntry.getName(), nodeEntry.getUrl(), nodeEntry.getScore()))
+        final List<NetworkNode> graphNodes = nodeEntryBeans.stream()
+                .map(nodeEntry -> new NetworkNode(nodeEntry.getIdentifier(), nodeEntry.getName(), nodeEntry.getUrl(), nodeEntry.getScore()))
                 .collect(Collectors.toList());
 
         mapIdToElement(graphNodes, idToNode);
     }
 
     private void loadAnnotations(final File file,
-                                 final Map<String, HAnnotation> idToAnnotation,
-                                 final Map<String, List<HAnnotation>> categoryToAnnotations)
+                                 final Map<String, NetworkAnnotation> idToAnnotation,
+                                 final Map<String, List<NetworkAnnotation>> categoryToAnnotations)
             throws FileNotFoundException {
 
         final Map<String, String> annotationColumns = new HashMap<>();
@@ -100,7 +100,7 @@ public class DataSet {
 
         // Category <-> annotationEntries.
         annotationEntries.forEach(annotationEntry -> {
-            final HAnnotation hAnnotation = new HAnnotation(
+            final NetworkAnnotation hAnnotation = new NetworkAnnotation(
                     annotationEntry.getIdentifier(),
                     annotationEntry.getName(),
                     annotationEntry.getUrl(),
@@ -115,22 +115,22 @@ public class DataSet {
     }
 
     private void loadLinks(final File linkFile,
-                           final Map<String, HNode> idToNode,
-                           final Map<String, HAnnotation> idToAnnotation,
-                           final UndirectedGraph<HNode, DefaultEdge> graph)
+                           final Map<String, NetworkNode> idToNode,
+                           final Map<String, NetworkAnnotation> idToAnnotation,
+                           final UndirectedGraph<NetworkNode, DefaultEdge> graph)
             throws FileNotFoundException {
 
         final CSVReader csvReader = new CSVReader(new FileReader(linkFile), '\t');
         csvReader.forEach(ids -> {
             final String sourceId = ids[0]; // First column is link source.
-            final HNode sourceNode = idToNode.get(sourceId);
-            final HAnnotation sourceAnnotation = idToAnnotation.get(sourceId);
+            final NetworkNode sourceNode = idToNode.get(sourceId);
+            final NetworkAnnotation sourceAnnotation = idToAnnotation.get(sourceId);
 
             // Remaining columns are link targets; one link per target.
             for (int i = 1; i < ids.length; i++) {
                 final String targetId = ids[i];
-                final HNode targetNode = idToNode.get(targetId);
-                final HAnnotation targetAnnotation = idToAnnotation.get(targetId);
+                final NetworkNode targetNode = idToNode.get(targetId);
+                final NetworkAnnotation targetAnnotation = idToAnnotation.get(targetId);
 
                 // NodeEntry -> node.
                 if (sourceNode != null && targetNode != null) {
@@ -158,7 +158,7 @@ public class DataSet {
         superNetwork.set(loadNetwork());
     }
 
-    private <T extends HElement> void mapIdToElement(final List<T> elements, Map<String, T> idToElement) {
+    private <T extends NetworkElement> void mapIdToElement(final List<T> elements, Map<String, T> idToElement) {
         elements.forEach(e -> idToElement.put(e.identifier, e));
     }
 

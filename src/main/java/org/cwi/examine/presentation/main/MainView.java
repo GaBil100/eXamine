@@ -1,28 +1,28 @@
-package org.cwi.examine.presentation;
+package org.cwi.examine.presentation.main;
 
 import javafx.embed.swing.SwingNode;
+import javafx.geometry.Side;
 import javafx.scene.layout.BorderPane;
-import org.cwi.examine.model.Model;
+import org.cwi.examine.presentation.main.category.CategoryOverview;
 import org.cwi.examine.presentation.visualization.Visualization;
 
 /**
  * Primary pane of the application.
  */
-public class MainPane extends BorderPane {
+public class MainView extends BorderPane {
 
-    private final Model model;
     private final Visualization visualization;
-    private final CategoryOverview elementPane;
+    private final CategoryOverview categoryOverview;
 
-    public MainPane(final Model model) {
-        this.model = model;
+    public MainView() {
 
         // Side pane for element information and selection.
-        elementPane = new CategoryOverview(model);
-        setLeft(elementPane);
+        categoryOverview = new CategoryOverview();
+        categoryOverview.setSide(Side.LEFT);
+        setRight(categoryOverview);
 
         // Network visualization.
-        visualization = new Visualization(model);
+        visualization = new Visualization();
         final SwingNode visualizationWrapper = new SwingNode();
         visualizationWrapper.setContent(visualization.getRootPanel());
         visualization.setupGraphics();
@@ -31,5 +31,9 @@ public class MainPane extends BorderPane {
 
     public Visualization getVisualization() {
         return visualization;
+    }
+
+    public CategoryOverview getCategoryOverview() {
+        return categoryOverview;
     }
 }

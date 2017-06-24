@@ -3,8 +3,8 @@ package org.cwi.examine.presentation.visualization;
 import static org.cwi.examine.graphics.StaticGraphics.sketchHeight;
 import static org.cwi.examine.graphics.StaticGraphics.sketchWidth;
 
-// General visualization parameters.
-public class Parameters {
+// Visualization configuration constants.
+public class OverviewConstants {
     public static final int     SET_LABEL_MAX_WIDTH     = 200;
     public static final int     SET_LABEL_MAX_LINES     = 3;
     public static final double  LABEL_PADDING           = 4;

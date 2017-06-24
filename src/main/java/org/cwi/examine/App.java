@@ -4,8 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.cwi.examine.data.csv.DataSet;
-import org.cwi.examine.model.Model;
-import org.cwi.examine.presentation.MainPane;
+import org.cwi.examine.presentation.main.MainSection;
 
 import java.io.IOException;
 
@@ -19,8 +18,7 @@ public class App extends Application {
     private static final String USER_AGENT_STYLESHEET = "UserAgentStylesheet.css";
 
     private final DataSet dataSet = new DataSet();
-    private final Model model = new Model(dataSet);
-    private MainPane mainPane;
+    private MainSection mainSection = new MainSection(dataSet);
 
     public static void main(String[] args) {
         launch(args);
@@ -34,9 +32,7 @@ public class App extends Application {
 
         primaryStage.setTitle(TITLE);
 
-        mainPane = new MainPane(model);
-
-        final Scene scene = new Scene(mainPane);
+        final Scene scene = new Scene(mainSection.getView());
         primaryStage.setScene(scene);
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
@@ -47,7 +43,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        mainPane.getVisualization().stop();
+        mainSection.exit();
     }
 
 }

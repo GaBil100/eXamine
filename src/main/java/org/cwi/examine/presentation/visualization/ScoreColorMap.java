@@ -26,7 +26,7 @@ public class ScoreColorMap {
     public static final Color darkGreen = new Color(27, 120, 55);
             
     /**
-     * Get the color for a given value.
+     * Get the getColor for a given value.
      */
     public static Color color(double value) {
         Color result;

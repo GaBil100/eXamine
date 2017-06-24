@@ -4,8 +4,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import javafx.collections.ListChangeListener;
 import org.cwi.examine.graphics.PVector;
 import org.cwi.examine.graphics.draw.PositionedSnippet;
-import org.cwi.examine.model.HAnnotation;
-import org.cwi.examine.model.HNode;
+import org.cwi.examine.model.NetworkAnnotation;
+import org.cwi.examine.model.NetworkNode;
 import org.cwi.examine.model.Network;
 import org.cwi.examine.presentation.visualization.Visualization;
 import org.cwi.examine.presentation.visualization.layout.Layout;
@@ -175,9 +175,9 @@ public class Overview extends PositionedSnippet {
                 }
             };
             visualization.model.activeNetworkProperty().addListener((obs, old, activeNetwork) -> modelObs.run());
-            visualization.model.activeAnnotationListProperty().addListener(new ListChangeListener<HAnnotation>() {
+            visualization.model.activeAnnotationListProperty().addListener(new ListChangeListener<NetworkAnnotation>() {
                 @Override
-                public void onChanged(Change<? extends HAnnotation> c) {
+                public void onChanged(Change<? extends NetworkAnnotation> c) {
                     modelObs.run();
                 }
             });
@@ -234,7 +234,7 @@ public class Overview extends PositionedSnippet {
             // Construct nodes and push to overview.
             synchronized (nodeRepresentations) {
                 nodeRepresentations.clear();
-                for(HNode n: layout.nodes)
+                for(NetworkNode n: layout.nodes)
                     nodeRepresentations.add(new NodeRepresentation(visualization, n));
                 updateNodePositions();
             }
@@ -253,8 +253,8 @@ public class Overview extends PositionedSnippet {
             for (RichEdge iE : layout.richGraph.edgeSet())
                 if(iE.core) {
                     // End point proteins.
-                    HNode sP = layout.richGraph.getEdgeSource(iE).element;
-                    HNode tP = layout.richGraph.getEdgeTarget(iE).element;
+                    NetworkNode sP = layout.richGraph.getEdgeSource(iE).element;
+                    NetworkNode tP = layout.richGraph.getEdgeTarget(iE).element;
 
                     // Ignore self-loops.
                     if (sP == tP) {
@@ -287,7 +287,7 @@ public class Overview extends PositionedSnippet {
             // Create new representations.
             List<SetContour> sR = new ArrayList<>();
             for (int i = layout.sets.size() - 1; 0 <= i; i--) {
-                HAnnotation pS = layout.sets.get(i);
+                NetworkAnnotation pS = layout.sets.get(i);
 
                 // Stick to same snippet.
                 Geometry bodyShape = setContours.ribbonShapes.get(i);

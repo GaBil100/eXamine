@@ -94,7 +94,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.cwi.examine.internal.Application</mainClass>
+                            <mainClass>org.cwi.examine.internal.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -108,7 +108,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>org.cwi.examine.internal.Application</mainClass>
+                            <mainClass>org.cwi.examine.internal.App</mainClass>
                             <onejarVersion>0.97</onejarVersion>
                             <attachToBuild>true</attachToBuild>
                         </configuration>

@@ -53,7 +53,7 @@ public class DataSet {
         }
 
         // Categories.
-        final List<HCategory> categories = new ArrayList<>();
+        final List<HCategory<HAnnotation>> categories = new ArrayList<>();
         categoryToAnnotations.forEach((id, hAnnotations) ->
                 categories.add(new HCategory(id, hAnnotations)));
 

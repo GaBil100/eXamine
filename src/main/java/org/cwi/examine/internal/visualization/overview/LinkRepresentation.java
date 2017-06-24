@@ -40,7 +40,7 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
 
     @Override
     public void draw() {
-        boolean highlight = visualization.model.highlightedInteractions.get().contains(edge);
+        boolean highlight = visualization.model.highlightedLinksProperty().get().contains(edge);
         
         StaticGraphics.picking();
 
@@ -70,25 +70,25 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
         Set<HNode> hP = new HashSet<HNode>();
         hP.add(element.node1);
         hP.add(element.node2);
-        visualization.model.highlightedProteins.set(new ObservableSetWrapper<>(hP));
+        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
         
         // Highlight interactions.
         Set<DefaultEdge> hI = new HashSet<DefaultEdge>();
         hI.add(edge);
-        visualization.model.highlightedInteractions.set(new ObservableSetWrapper<>(hI));
+        visualization.model.highlightedLinksProperty().set(new ObservableSetWrapper<>(hI));
         
         // Intersect annotation annotations.
         Set<HAnnotation> hT = new HashSet<HAnnotation>();
         hT.addAll(element.node1.annotations);
         hT.retainAll(element.node2.annotations);
-        visualization.model.highlightedSets.set(new ObservableSetWrapper<>(hT));
+        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
     }
 
     @Override
     public void endHovered() {
-        visualization.model.highlightedProteins.clear();
-        visualization.model.highlightedInteractions.clear();
-        visualization.model.highlightedSets.clear();
+        visualization.model.highlightedNodesProperty().clear();
+        visualization.model.highlightedLinksProperty().clear();
+        visualization.model.highlightedAnnotations().clear();
     }
 
     

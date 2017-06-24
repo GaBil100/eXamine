@@ -99,7 +99,7 @@ public class SetLabel extends SetRepresentation {
             translate(Parameters.LABEL_PADDING + Parameters.LABEL_MARKER_RADIUS, 0.5 * dim.y);
         }
 
-        final Network network = visualization.model.activeNetwork.get();
+        final Network network = visualization.model.activeNetworkProperty().get();
         double maxRadius = 0.5 * textHeight() - 2;
         double minScoreExp = exponent(network.minAnnotationScore);
         double maxScoreExp = exponent(network.maxAnnotationScore);
@@ -120,7 +120,7 @@ public class SetLabel extends SetRepresentation {
     }
 
     private boolean selected() { 
-        return visualization.model.selection.activeSetMap.containsKey(element);
+        return visualization.model.activeAnnotationMapProperty().containsKey(element);
     }
 
     // Delegate mouse wheel to parent list for scrolling.

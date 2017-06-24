@@ -37,7 +37,8 @@ public class PickingGraphics2D extends Graphics2D {
     private Graphics2D parent;
     
     public PickingGraphics2D(Graphics2D parent, int width, int height) {
-        this.parentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        this.parentImage = new BufferedImage(
+                Math.max(width, 1), Math.max(height, 1), BufferedImage.TYPE_INT_RGB);
         this.parent = this.parentImage.createGraphics();
         
         this.parent.setRenderingHint(RenderingHints.KEY_ANTIALIASING,

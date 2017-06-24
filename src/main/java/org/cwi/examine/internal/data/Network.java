@@ -15,7 +15,7 @@ import org.jgrapht.graph.UndirectedSubgraph;
 public class Network {
 
     public final UndirectedGraph<HNode, DefaultEdge> graph;
-    public final List<HCategory> categories;
+    public final List<HCategory<HAnnotation>> categories;
     public final List<HAnnotation> annotations;
     public final HCategory modules;
     public final double minNodeScore, maxNodeScore;
@@ -25,7 +25,8 @@ public class Network {
         this(new Pseudograph<>(DefaultEdge.class), new ArrayList<>());
     }
 
-    public Network(final UndirectedGraph<HNode, DefaultEdge> graph, final List<HCategory> categories) {
+    public Network(final UndirectedGraph<HNode, DefaultEdge> graph,
+                   final List<HCategory<HAnnotation>> categories) {
         this.graph = graph;
         this.categories = new ArrayList<>(categories);
         this.categories.removeIf(category -> category.name.equals("Module"));
@@ -60,7 +61,8 @@ public class Network {
         return new Network(undirectedSubGraph, network.categories);
     }
 
-    public static Network induce(final HCategory categoryToInclude, final Network network) {
+    public static Network induce(final HCategory<HAnnotation> categoryToInclude,
+                                 final Network network) {
         Set<HNode> unionNodes = new HashSet<>();
         categoryToInclude.annotations.forEach(annotation -> unionNodes.addAll(annotation.set));
         return induce(unionNodes, network);

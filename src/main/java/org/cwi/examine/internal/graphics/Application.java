@@ -2,7 +2,6 @@ package org.cwi.examine.internal.graphics;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -21,7 +20,6 @@ import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -34,7 +32,8 @@ import org.w3c.dom.Document;
 import static org.cwi.examine.internal.graphics.StaticGraphics.*;
 
 // Graphics application.
-public abstract class Application extends JFrame {
+public abstract class Application {
+
     private final JPanel rootPanel;     // Main content panel.
     protected Snippet rootSnippet;      // Root snippet.
     private DrawManager drawManager;    // Snippet manager.
@@ -43,12 +42,6 @@ public abstract class Application extends JFrame {
     protected MouseEvent mouseEvent;
     
     public Application() {
-        setSize(1000, 600);
-        setExtendedState(Frame.NORMAL);
-        setVisible(true);
-        
-        // Graphics setup.
-        setup();
 
         rootPanel = new JPanel() {
 
@@ -94,7 +87,6 @@ public abstract class Application extends JFrame {
         ToolTipManager.sharedInstance().registerComponent(rootPanel);
         
         rootPanel.setDoubleBuffered(true);
-        setContentPane(rootPanel);
         
         // Root snippet, contains application rootDraw calls.
         rootSnippet = new Snippet() {
@@ -113,16 +105,20 @@ public abstract class Application extends JFrame {
         // Event listeners.
         rootPanel.addMouseListener(new LocalMouseListener());
         rootPanel.addMouseMotionListener(new LocalMouseMotionListener());
-        this.addKeyListener(new LocalKeyListener());
+        rootPanel.addKeyListener(new LocalKeyListener());
     }
-    
-    public final void setup() {
+
+    public JPanel getRootPanel() {
+        return rootPanel;
+    }
+
+    public final void setupGraphics() {
         // Draw manager.
         drawManager = new DrawManager(this);
         
         // Adapt picking buffer to canvas size.
         drawManager.updatePickingBuffer();
-        addComponentListener(new ComponentListener() {
+        rootPanel.addComponentListener(new ComponentListener() {
 
             @Override
             public void componentResized(ComponentEvent ce) {
@@ -144,7 +140,7 @@ public abstract class Application extends JFrame {
         });
         
         // Mouse wheel listener, routes to hovered item.
-        addMouseWheelListener(mwe -> {
+        rootPanel.addMouseWheelListener(mwe -> {
             if(drawManager.hovered != null) {
                 drawManager.hovered.mouseWheel(mwe.getWheelRotation());
             }

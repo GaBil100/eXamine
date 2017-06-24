@@ -5,20 +5,20 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Category of annotations.
+ * Category of elements.
  */
-public class HCategory {
+public class HCategory<E extends HElement> {
 
     public static int MAXIMUM_SIZE = 50;
 
     public final String name;
-    public final List<HAnnotation> annotations;
+    public final List<E> annotations;
 
-    public HCategory(final String name, final List<HAnnotation> annotations) {
+    public HCategory(final String name, final List<E> annotations) {
         this.name = name;
 
         // Sort annotations by score, then alphabet.
-        final List<HAnnotation> topAnnotations = new ArrayList<>(annotations);
+        final List<E> topAnnotations = new ArrayList<>(annotations);
         Collections.sort(topAnnotations, (lS, rS) -> {
             int result;
 

@@ -104,7 +104,7 @@ public class SetContour extends SetRepresentation {
         // Highlight proteins term intersection.
         Set<HNode> hP = new HashSet<>();
         hP.addAll(element.elements);
-        visualization.model.highlightedProteins.set(new ObservableSetWrapper<>(hP));
+        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
         
         // Highlight annotation annotations that contain all elements of this set.
         Set<HAnnotation> hT = new HashSet<>();
@@ -112,13 +112,13 @@ public class SetContour extends SetRepresentation {
         for(int i = 1; i < element.elements.size(); i++) {
             hT.retainAll(element.elements.get(i).annotations);
         }
-        visualization.model.highlightedSets.set(new ObservableSetWrapper<>(hT));
+        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
     }
 
     @Override
     public void endHovered() {
-        visualization.model.highlightedProteins.clear();
-        visualization.model.highlightedSets.clear();
+        visualization.model.highlightedNodesProperty().clear();
+        visualization.model.highlightedAnnotations().clear();
     }
 
     @Override

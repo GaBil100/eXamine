@@ -26,8 +26,6 @@ import static org.cwi.examine.internal.visualization.Parameters.*;
 // Visualization module.
 public class Visualization extends Application {
 
-    public static final String APPLICATION_TITLE = "eXamineS";
-
     public final Model model;
     private List<SetList> setLists;  // GO Term lists (per domain).
     private Overview overview;       // Protein SOM overview.
@@ -37,19 +35,14 @@ public class Visualization extends Application {
     public Visualization(final Model model) {
         this.model = model;
 
-        setColors = new SetColors(model.selection);
-
-        setTitle(APPLICATION_TITLE);
+        setColors = new SetColors(model);
 
         // Protein set listing, update on selection change.
         setLists = new ArrayList<>();
-        model.activeNetwork.addListener((observable, old, activeNetwork) -> setLists.clear());
+        model.activeNetworkProperty().addListener((observable, old, activeNetwork) -> setLists.clear());
 
         // Overview at bottom, dominant.
         overview = new Overview(this);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
     }
     
     // Processing rootDraw.
@@ -59,7 +52,7 @@ public class Visualization extends Application {
         try {
             // Construct set lists.
             if(setLists.isEmpty()) {
-                for(HCategory d: model.activeNetwork.get().categories) {
+                for(HCategory<HAnnotation> d: model.activeNetworkProperty().get().categories) {
                     List<SetLabel> labels = new ArrayList<>();
 
                     for(HAnnotation t: d.annotations) {
@@ -89,7 +82,7 @@ public class Visualization extends Application {
             List<SetList> openSl = new ArrayList<>();
             List<SetList> closedSl = new ArrayList<>();
             for(SetList sl: setLists) {
-                (model.openedCategories.contains(sl.element) ? openSl : closedSl)
+                (model.openedCategoriesProperty().contains(sl.element) ? openSl : closedSl)
                 .add(sl);
             }
             sideSnippets.addAll(openSl);
@@ -105,7 +98,7 @@ public class Visualization extends Application {
             overview.topLeft(shiftPos);
             snippet(overview);
             
-            // Occlude any overview overspil for side lists.
+            // Occlude any overview overflow for side lists.
             color(Color.WHITE);
             fillRect(-MARGIN, -MARGIN, shiftPos.x + MARGIN, sketchHeight());
             snippets(sideSnippets);
@@ -121,9 +114,7 @@ public class Visualization extends Application {
     }
 
     // Terminate overview on disposal.
-    @Override
-    public void dispose() {
+    public void stop() {
         overview.stop();
-        super.dispose();
     }
 }

@@ -131,29 +131,29 @@ public class NodeRepresentation extends Representation<HNode> {
         // Highlight protein, its adjacent interactions, and its member terms.
         Set<HNode> hP = new HashSet<>();
         hP.add(element);
-        visualization.model.highlightedProteins.set(new ObservableSetWrapper<>(hP));
+        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
         
         // Highlight interactions.
         Set<DefaultEdge> hI = new HashSet<>();
-        Set<DefaultEdge> edges = visualization.model.activeNetwork.get().graph.edgesOf(element);
+        Set<DefaultEdge> edges = visualization.model.activeNetworkProperty().get().graph.edgesOf(element);
         hI.addAll(edges);
-        visualization.model.highlightedInteractions.set(new ObservableSetWrapper<>(hI));
+        visualization.model.highlightedLinksProperty().set(new ObservableSetWrapper<>(hI));
         
         // Highlight member terms.
         Set<HAnnotation> hT = new HashSet<>();
         hT.addAll(element.annotations);
-        visualization.model.highlightedSets.set(new ObservableSetWrapper<>(hT));
+        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
     }
 
     @Override
     public void endHovered() {
-        visualization.model.highlightedProteins.clear();
-        visualization.model.highlightedInteractions.clear();
-        visualization.model.highlightedSets.clear();
+        visualization.model.highlightedNodesProperty().clear();
+        visualization.model.highlightedLinksProperty().clear();
+        visualization.model.highlightedAnnotations().clear();
     }
     
     private boolean highlight() {
-        return visualization.model.highlightedProteins.get().contains(element);
+        return visualization.model.highlightedNodesProperty().get().contains(element);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class NodeRepresentation extends Representation<HNode> {
                 }
             }
         } else {
-            visualization.model.selection.select(element);
+            visualization.model.select(element);
         }
     }
 }

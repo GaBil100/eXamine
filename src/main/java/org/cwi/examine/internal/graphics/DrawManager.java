@@ -76,8 +76,9 @@ public class DrawManager {
      * Install new picking buffer.
      */
     public void updatePickingBuffer() {
-        pickingGraphics = new PickingGraphics2D(
-                defaultGraphics, this.parent.getWidth(), this.parent.getHeight());
+        pickingGraphics = new PickingGraphics2D(defaultGraphics,
+                this.parent.getRootPanel().getWidth(),
+                this.parent.getRootPanel().getHeight());
     }
     
     /**

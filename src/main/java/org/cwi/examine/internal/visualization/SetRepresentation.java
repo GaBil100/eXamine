@@ -29,7 +29,7 @@ public abstract class SetRepresentation extends Representation<HAnnotation> {
     }
 
     public boolean highlight() {
-        return visualization.model.highlightedSets.get().contains(element);
+        return visualization.model.highlightedAnnotations().get().contains(element);
     }
 
     @Override
@@ -37,24 +37,24 @@ public abstract class SetRepresentation extends Representation<HAnnotation> {
     public void beginHovered() {
         Set<HAnnotation> hT = new HashSet<>();
         hT.add(element);
-        visualization.model.highlightedSets.set(new ObservableSetWrapper<>(hT));
+        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
         
         Set<HNode> hP = new HashSet<>();
         hP.addAll(element.elements);
-        visualization.model.highlightedProteins.set(new ObservableSetWrapper<>(hP));
+        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
     }
 
     @Override
     public void endHovered() {
-        visualization.model.highlightedSets.clear();
-        visualization.model.highlightedProteins.clear();
+        visualization.model.highlightedAnnotations().clear();
+        visualization.model.highlightedNodesProperty().clear();
     }
 
     @Override
     // Adjust weight if set is selected.
     public void mouseWheel(int rotation) {
-        if(visualization.model.selection.activeSetMap.keySet().contains(element)) {
-            visualization.model.selection.changeWeight(element, -rotation);
+        if(visualization.model.activeAnnotationMapProperty().keySet().contains(element)) {
+            visualization.model.changeWeight(element, -rotation);
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class SetRepresentation extends Representation<HAnnotation> {
         }
         // Select otherwise.
         else {
-            visualization.model.selection.select(element);
+            visualization.model.select(element);
         }
     }
 }

@@ -3,9 +3,9 @@ package org.cwi.examine.internal.visualization;
 import java.awt.Color;
 
 import javafx.collections.ListChangeListener;
-import org.cwi.examine.internal.model.Selection;
 
 import org.cwi.examine.internal.data.HAnnotation;
+import org.cwi.examine.internal.model.Model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 // Selected set to color map.
 public class SetColors implements ListChangeListener<HAnnotation> {
-    private final Selection selection;
+    private final Model model;
     private final Map<HAnnotation, Color> predefinedColorMap;  // Predefined protein set to color mapping.
     private final Map<HAnnotation, Color> colorMap;            // Dynamic protein set to color mapping.
     private final ArrayList<Color> availableColors;            // Available set colors.
@@ -35,8 +35,8 @@ public class SetColors implements ListChangeListener<HAnnotation> {
             new Color(255, 237, 111)
     };
     
-    public SetColors(final Selection selection) {
-        this.selection = selection;
+    public SetColors(final Model model) {
+        this.model = model;
 
         colorMap = new HashMap<>();
         availableColors = new ArrayList<>();
@@ -46,18 +46,18 @@ public class SetColors implements ListChangeListener<HAnnotation> {
         predefinedColorMap = new HashMap<>();
         
         // Listen to model and parameter changes.
-        selection.activeSetList.addListener(this);
+        model.activeAnnotationListProperty().addListener(this);
     }
 
     public void onChanged(ListChangeListener.Change<? extends HAnnotation> change) {
         Set<HAnnotation> newActiveSets = new HashSet<>();
-        newActiveSets.addAll(selection.activeSetList);
+        newActiveSets.addAll(model.activeAnnotationListProperty());
         newActiveSets.removeAll(colorMap.keySet());
         newActiveSets.removeAll(predefinedColorMap.keySet());
         
         Set<HAnnotation> newDormantSets = new HashSet<>();
         newDormantSets.addAll(colorMap.keySet());
-        newDormantSets.removeAll(selection.activeSetList);
+        newDormantSets.removeAll(model.activeAnnotationListProperty());
         newDormantSets.removeAll(predefinedColorMap.keySet());
         
         // Assign colors to new active sets.

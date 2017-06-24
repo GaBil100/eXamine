@@ -2,7 +2,6 @@ package org.cwi.examine.internal.layout;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,13 +12,13 @@ import org.cwi.examine.internal.data.Network;
 import org.cwi.examine.internal.graphics.PVector;
 import org.cwi.examine.internal.layout.dwyer.cola.Descent;
 import org.cwi.examine.internal.layout.dwyer.vpsc.Constraint;
+import org.cwi.examine.internal.model.Model;
 import org.cwi.examine.internal.visualization.Parameters;
 import org.cwi.examine.internal.data.HNode;
 import org.cwi.examine.internal.data.HAnnotation;
 import org.cwi.examine.internal.graphics.StaticGraphics;
 import org.cwi.examine.internal.layout.dwyer.vpsc.Variable;
 import org.cwi.examine.internal.layout.dwyer.vpsc.Solver;
-import org.cwi.examine.internal.model.Selection;
 import org.jgrapht.Graph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
@@ -39,10 +38,10 @@ public class Layout {
     
     // Network and set topology.
     public Network network;
-    public Selection selection;
     public List<HAnnotation> sets;
     public final HNode[] nodes;
     public final Map<HNode, List<HAnnotation>> nodeMemberships;
+    private final Model model;
     
     // Spanning set graphs.
     private WeightedGraph<HNode, DefaultEdge> minDistGraph;
@@ -65,13 +64,13 @@ public class Layout {
     // Derived metrics.
     public PVector dimensions;
     
-    public Layout(Network network, Selection selection, Layout oldLayout) {
+    public Layout(Network network, Model model, Layout oldLayout) {
         this.network = network;
-        this.selection = selection;
+        this.model = model;
         
         // Order annotations by size.
         this.sets = new ArrayList<>();
-        this.sets.addAll(selection.activeSetList);
+        this.sets.addAll(model.activeAnnotationListProperty());
         Collections.sort(this.sets, (s1, s2) -> s1.elements.size() - s2.elements.size());
         
         // Invert set membership for vertices.
@@ -325,7 +324,7 @@ public class Layout {
                     int rSI = index.get(rSN.element);
                     int rTI = index.get(rTN.element);
                     richGraph.setEdgeWeight(rE, Math.max(mD[rSI][rTI],
-                        (SET_EDGE_CONTRACTION / selection.activeSetMap.get(s)) * D[rSI][rTI]));
+                        (SET_EDGE_CONTRACTION / model.activeAnnotationMapProperty().get(s)) * D[rSI][rTI]));
                 }
                 //rE.memberships.add(s);
             }

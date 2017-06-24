@@ -430,14 +430,14 @@ public class StaticGraphics {
         return mouseLocal;
     }
     
-    // Application width.
+    // App width.
     public static double applicationWidth() {
-        return application.getWidth();
+        return application.getRootPanel().getWidth();
     }
     
-    // Application height.
+    // App height.
     public static double applicationHeight() {
-        return application.getHeight();
+        return application.getRootPanel().getHeight();
     }
     
     // Applet dimensions.
@@ -461,7 +461,7 @@ public class StaticGraphics {
     }
 
     public static void cursor(Cursor cursor) {
-        application.setCursor(cursor);
+        application.getRootPanel().setCursor(cursor);
     }
     
 }

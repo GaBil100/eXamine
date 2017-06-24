@@ -172,12 +172,12 @@ public class Overview extends PositionedSnippet {
                 synchronized(LayoutUpdater.this) {
                     // Fetch context network (single input network, for now).
                     // Now bypassed to super network for Cytoscape integration.
-                    contextNetwork = visualization.model.activeNetwork.get();
+                    contextNetwork = visualization.model.activeNetworkProperty().get();
                     layoutDirty = true;
                 }
             };
-            visualization.model.activeNetwork.addListener((obs, old, activeNetwork) -> modelObs.run());
-            visualization.model.selection.activeSetList.addListener(new ListChangeListener<HAnnotation>() {
+            visualization.model.activeNetworkProperty().addListener((obs, old, activeNetwork) -> modelObs.run());
+            visualization.model.activeAnnotationListProperty().addListener(new ListChangeListener<HAnnotation>() {
                 @Override
                 public void onChanged(Change<? extends HAnnotation> c) {
                     modelObs.run();
@@ -205,7 +205,7 @@ public class Overview extends PositionedSnippet {
                 if(contextNetwork != null && !contextNetwork.graph.vertexSet().isEmpty()) {
                     if (layoutDirty || layout == null) {
                         layoutDirty = false;
-                        layout = new Layout(contextNetwork, visualization.model.selection, layout);
+                        layout = new Layout(contextNetwork, visualization.model, layout);
                         updateNodeRepresentations();
                         updateInteractionRepresentations();
                         updateSetRepresentations();

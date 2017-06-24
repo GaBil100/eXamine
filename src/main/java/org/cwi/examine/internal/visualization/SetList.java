@@ -101,7 +101,7 @@ public class SetList extends Representation<HCategory> {
         List<SetLabel> taggedLabels = new ArrayList<>();    // Tagged set label representations.
         List<SetLabel> remainderLabels = new ArrayList<>(); // Set label representations.
         for(SetLabel lbl: labels) {
-            (visualization.model.selection.activeSetMap.containsKey(lbl.element) ?
+            (visualization.model.activeAnnotationMapProperty().containsKey(lbl.element) ?
                     taggedLabels :
                     remainderLabels).add(lbl);
         }
@@ -174,15 +174,15 @@ public class SetList extends Representation<HCategory> {
     }
     
     public boolean isOpened() {
-        return visualization.model.openedCategories.get().contains(element);
+        return visualization.model.openedCategoriesProperty().get().contains(element);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         if(isOpened()) {
-            visualization.model.openedCategories.remove(element);
+            visualization.model.openedCategoriesProperty().remove(element);
         } else {
-            visualization.model.openedCategories.add(element);
+            visualization.model.openedCategoriesProperty().add(element);
         }
     }
 

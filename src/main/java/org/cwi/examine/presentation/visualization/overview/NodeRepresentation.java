@@ -1,0 +1,172 @@
+package org.cwi.examine.presentation.visualization.overview;
+
+import java.awt.Color;
+
+import com.sun.javafx.collections.ObservableSetWrapper;
+import org.cwi.examine.graphics.PVector;
+import org.cwi.examine.graphics.StaticGraphics;
+import org.cwi.examine.graphics.draw.Parameters;
+import org.cwi.examine.graphics.draw.Representation;
+import org.cwi.examine.presentation.visualization.Visualization;
+
+import org.cwi.examine.model.HNode;
+import org.cwi.examine.model.HAnnotation;
+import org.cwi.examine.presentation.visualization.SetRepresentation;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.awt.Desktop;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
+import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.cwi.examine.presentation.visualization.layout.Layout;
+import org.jgrapht.graph.DefaultEdge;
+
+// Node representation.
+public class NodeRepresentation extends Representation<HNode> {
+
+    private final Visualization visualization;
+    
+    public NodeRepresentation(final Visualization visualization, HNode element) {
+        super(element);
+
+        this.visualization = visualization;
+    }
+
+    @Override
+    public PVector dimensions() {
+        return PVector.v();
+    }
+
+    @Override
+    public void draw() {
+        StaticGraphics.color(Color.BLACK);
+        StaticGraphics.translate(topLeft);
+        
+        // Get label bounds, but also annotations label font.
+        PVector bounds = Layout.labelDimensions(element, true);
+        Shape shape = shape(bounds);
+        StaticGraphics.translate(-0.5 * bounds.x, -0.5 * bounds.y);
+        
+        // Background rectangle.
+        StaticGraphics.color(highlight() ? Parameters.containmentColor : Color.LIGHT_GRAY);
+                            //(Color) styleValue(BasicVisualLexicon.NODE_FILL_COLOR));
+        StaticGraphics.fill(shape);
+        
+        // Foreground outline with color coding.
+        StaticGraphics.color(Color.BLACK); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
+        StaticGraphics.strokeWeight(2);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
+        StaticGraphics.draw(shape);
+        
+        StaticGraphics.picking();
+        StaticGraphics.color(highlight() ? Parameters.textContainedColor : Color.BLACK);
+                            //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
+        StaticGraphics.text(element.toString(), 0.5 * (bounds.y + org.cwi.examine.presentation.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.presentation.visualization.Parameters.NODE_OUTLINE - 3);
+    }
+    
+    private Shape shape(PVector bounds) {
+        Shape result;
+
+        String cyShape = "Rounded";
+        //NodeShape cyShape = styleValue(BasicVisualLexicon.NODE_SHAPE);
+        
+        // Hexagon.
+        if(cyShape.equals("Hexagon")) {
+            double r = 0.5 * bounds.y;
+            double hr = 0.5 * r;
+            
+            Path2D path = new Path2D.Double();
+            path.moveTo(0, r);
+            path.lineTo(hr, 0);
+            path.lineTo(bounds.x - hr, 0);
+            path.lineTo(bounds.x, r);
+            path.lineTo(bounds.x - hr, bounds.y);
+            path.lineTo(hr, bounds.y);
+            path.closePath();
+            
+            result = path;
+        }
+        // Octagon.
+        else if(cyShape.equals("Octagon")) {
+            double hhr = 0.3 * bounds.y;
+            
+            Path2D path = new Path2D.Double();
+            path.moveTo(0, hhr);
+            path.lineTo(hhr, 0);
+            path.lineTo(bounds.x - hhr, 0);
+            path.lineTo(bounds.x, hhr);
+            path.lineTo(bounds.x, bounds.y - hhr);
+            path.lineTo(bounds.x - hhr, bounds.y);
+            path.lineTo(hhr, bounds.y);
+            path.lineTo(0, bounds.y - hhr);
+            path.closePath();
+            
+            result = path;
+        }
+        // Rounded rectangle.
+        else {
+            result = new RoundRectangle2D.Double(
+                        0, 0,
+                        bounds.x, bounds.y,
+                        bounds.y, bounds.y);
+        }
+        
+        return result;
+    }
+    
+//    private <V> V styleValue(VisualProperty<V> property) {
+//        return Model.styleValue(property, element.cyRow);
+//    }
+
+    @Override
+    public void beginHovered() {
+        // Highlight protein, its adjacent interactions, and its member terms.
+        Set<HNode> hP = new HashSet<>();
+        hP.add(element);
+        visualization.model.highlightedNodesProperty().set(new ObservableSetWrapper<>(hP));
+        
+        // Highlight interactions.
+        Set<DefaultEdge> hI = new HashSet<>();
+        Set<DefaultEdge> edges = visualization.model.activeNetworkProperty().get().graph.edgesOf(element);
+        hI.addAll(edges);
+        visualization.model.highlightedLinksProperty().set(new ObservableSetWrapper<>(hI));
+        
+        // Highlight member terms.
+        Set<HAnnotation> hT = new HashSet<>();
+        hT.addAll(element.annotations);
+        visualization.model.highlightedAnnotations().set(new ObservableSetWrapper<>(hT));
+    }
+
+    @Override
+    public void endHovered() {
+        visualization.model.highlightedNodesProperty().clear();
+        visualization.model.highlightedLinksProperty().clear();
+        visualization.model.highlightedAnnotations().clear();
+    }
+    
+    private boolean highlight() {
+        return visualization.model.highlightedNodesProperty().get().contains(element);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Open website(s) on ctrl click.
+        if(StaticGraphics.mouseEvent().isControlDown()) {
+            if(element.url != null && element.url.trim().length() > 0) {
+                try {
+                    Desktop.getDesktop().browse(URI.create(element.url));
+                } catch(IOException ex) {
+                    Logger.getLogger(SetRepresentation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            visualization.model.select(element);
+        }
+    }
+}

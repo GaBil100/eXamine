@@ -8,7 +8,7 @@
     <version>2.0.1</version>
 
     <description>eXamine is a set-oriented visual analysis approach for annotated modules that displays set membership
-        as contours on top of a node-link layout. eXamine extends upon Self Organizing Maps to simultaneously lay out
+        as contours on top of a nodeEntry-link layout. eXamine extends upon Self Organizing Maps to simultaneously lay out
         nodes, links, and set contours.
     </description>
 
@@ -94,7 +94,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.cwi.examine.internal.App</mainClass>
+                            <mainClass>org.cwi.examine.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -108,7 +108,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>org.cwi.examine.internal.App</mainClass>
+                            <mainClass>org.cwi.examine.App</mainClass>
                             <onejarVersion>0.97</onejarVersion>
                             <attachToBuild>true</attachToBuild>
                         </configuration>

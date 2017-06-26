@@ -1,39 +1,38 @@
 package org.cwi.examine.presentation.main;
 
-import javafx.embed.swing.SwingNode;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import org.cwi.examine.presentation.main.category.CategoryOverview;
-import org.cwi.examine.presentation.visualization.Visualization;
+import org.cwi.examine.presentation.main.category.AnnotationOverview;
+import org.cwi.examine.presentation.nodelinkcontour.NodeLinkContourView;
 
 /**
  * Primary pane of the application.
  */
 public class MainView extends BorderPane {
 
-    private final Visualization visualization;
-    private final CategoryOverview categoryOverview;
+    private final NodeLinkContourView nodeLinkContourView = new NodeLinkContourView();
+    private final AnnotationOverview annotationOverview = new AnnotationOverview();
 
     public MainView() {
 
-        // Side pane for element information and selection.
-        categoryOverview = new CategoryOverview();
-        categoryOverview.setSide(Side.LEFT);
-        setRight(categoryOverview);
+        // Center network view in a scroll pane.
+        final ScrollPane nodeLinkContourScroll = new ScrollPane(nodeLinkContourView);
+        BorderPane.setAlignment(nodeLinkContourView, Pos.CENTER);
+        setCenter(nodeLinkContourScroll);
 
-        // Network visualization.
-        visualization = new Visualization();
-        final SwingNode visualizationWrapper = new SwingNode();
-        visualizationWrapper.setContent(visualization.getRootPanel());
-        visualization.setupGraphics();
-        setCenter(visualizationWrapper);
+        // Annotation overview at the left side.
+        annotationOverview.setSide(Side.RIGHT);
+        setLeft(annotationOverview);
     }
 
-    public Visualization getVisualization() {
-        return visualization;
+    public NodeLinkContourView getNodeLinkContourView() {
+        return nodeLinkContourView;
     }
 
-    public CategoryOverview getCategoryOverview() {
-        return categoryOverview;
+    public AnnotationOverview getAnnotationOverview() {
+        return annotationOverview;
     }
+
 }

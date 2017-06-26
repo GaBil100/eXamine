@@ -22,32 +22,5 @@ public class NetworkAnnotation extends NetworkElement {
         elements.add(node);
         set.add(node);
     }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 19 * hash + this.name.hashCode();
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null) {
-            return false;
-        }
-        if(getClass() != obj.getClass()) {
-            return false;
-        }
-        final NetworkAnnotation other = (NetworkAnnotation) obj;
-        if(!this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
-    }
     
 }

@@ -19,8 +19,4 @@ public class NetworkNode extends NetworkElement {
         this.annotations.add(annotation);
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
 }

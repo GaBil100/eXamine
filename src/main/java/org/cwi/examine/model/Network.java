@@ -15,7 +15,7 @@ import java.util.*;
 public class Network {
 
     public final UndirectedGraph<NetworkNode, DefaultEdge> graph;
-    public final List<NetworkCategory<NetworkAnnotation>> categories;
+    public final List<NetworkCategory> categories;
     public final List<NetworkAnnotation> annotations;
     public final NetworkCategory modules;
     public final double minNodeScore, maxNodeScore;
@@ -26,7 +26,7 @@ public class Network {
     }
 
     public Network(final UndirectedGraph<NetworkNode, DefaultEdge> graph,
-                   final List<NetworkCategory<NetworkAnnotation>> categories) {
+                   final List<NetworkCategory> categories) {
         this.graph = graph;
         this.categories = new ArrayList<>(categories);
         this.categories.removeIf(category -> category.name.equals("Module"));
@@ -38,10 +38,10 @@ public class Network {
                 .orElse(new NetworkCategory("Module", Collections.emptyList()));
 
         Set<NetworkNode> nodes = graph.vertexSet();
-        minNodeScore = nodes.stream().map(n -> n.score).min(Double::compare).orElse(0.);
-        maxNodeScore = nodes.stream().map(n -> n.score).max(Double::compare).orElse(1.);
-        minAnnotationScore = annotations.stream().map(a -> a.score).min(Double::compare).orElse(0.);
-        maxAnnotationScore = annotations.stream().map(a -> a.score).max(Double::compare).orElse(1.);
+        minNodeScore = nodes.stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
+        maxNodeScore = nodes.stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
+        minAnnotationScore = annotations.stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
+        maxAnnotationScore = annotations.stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
     }
     
     /**
@@ -61,8 +61,7 @@ public class Network {
         return new Network(undirectedSubGraph, network.categories);
     }
 
-    public static Network induce(final NetworkCategory<NetworkAnnotation> categoryToInclude,
-                                 final Network network) {
+    public static Network induce(final NetworkCategory categoryToInclude, final Network network) {
         Set<NetworkNode> unionNodes = new HashSet<>();
         categoryToInclude.annotations.forEach(annotation -> unionNodes.addAll(annotation.set));
         return induce(unionNodes, network);
@@ -71,4 +70,5 @@ public class Network {
     public static Network induce(final NetworkAnnotation annotationToInclude, final Network network) {
         return induce(annotationToInclude.set, network);
     }
+
 }

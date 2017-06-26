@@ -9,6 +9,8 @@ public interface Section {
 
     Region getView();
 
-    void exit();
+    default void exit() {
+
+    }
 
 }

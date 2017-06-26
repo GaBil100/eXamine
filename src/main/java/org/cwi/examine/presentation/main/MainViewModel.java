@@ -6,28 +6,28 @@ import com.sun.javafx.collections.ObservableSetWrapper;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import org.cwi.examine.data.csv.DataSet;
 import org.cwi.examine.model.*;
-import org.cwi.examine.presentation.visualization.SetColors;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+
+import static javafx.beans.binding.Bindings.createObjectBinding;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableList;
 
 /**
  * MainViewModel of network with interaction states.
  */
 public final class MainViewModel {
 
-    private final DataSet dataSet;
-    private final SetProperty<NetworkCategory> openedCategories;
-    private final ListProperty<NetworkCategory> orderedCategories;
+    private final ObjectProperty<Network> activeNetwork = new SimpleObjectProperty<>(new Network());
+    private final ListProperty<NetworkCategory> activeCategories = new SimpleListProperty<>(observableArrayList());
+
     private final SetProperty<NetworkNode> highlightedNodes;
     private final SetProperty<DefaultEdge> highlightedLinks;
     private final SetProperty<NetworkAnnotation> highlightedAnnotations;
-    private final ObjectProperty<Network> activeNetwork;
 
     // Included sets and the weight that has been assigned to them.
     private final ObservableMap<NetworkAnnotation, Double> activeSetMap;
@@ -38,55 +38,36 @@ public final class MainViewModel {
     // Selected set or protein.
     private ObjectProperty<NetworkElement> selected;
 
-    public MainViewModel(final DataSet dataSet) {
-        this.dataSet = dataSet;
-        this.openedCategories = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
-        this.orderedCategories = new SimpleListProperty<>(new ObservableListWrapper<>(new ArrayList<>()));
+    public MainViewModel() {
+
+        activeCategories.bind(createObjectBinding(() -> observableList(getActiveNetwork().categories), activeNetwork));
+
         this.highlightedNodes = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
         this.highlightedLinks = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
         this.highlightedAnnotations = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
-        this.activeNetwork = new SimpleObjectProperty<>(new Network());
         this.activeSetMap = new ObservableMapWrapper<>(new HashMap<>());
         this.activeSetList = new ObservableListWrapper<>(new ArrayList<>());
         this.selected = new SimpleObjectProperty<>(null);
-
-        // Update active network that is to be visualized.
-        // For now, it is the union of all known modules.
-        dataSet.superNetwork.addListener((obs, old, categories) -> {
-            final Network superNetwork = dataSet.superNetwork.get();
-            final Network moduleNetwork = Network.induce(superNetwork.modules, superNetwork);
-            activeNetworkProperty().set(moduleNetwork);
-
-            System.out.println(superNetwork.graph.vertexSet().size());
-            System.out.println(moduleNetwork.graph.vertexSet().size());
-        });
-
-        // Update ordered category list.
-        Runnable categoryObserver = () -> {
-            List<NetworkCategory> openedCat = new ArrayList<>();
-            List<NetworkCategory> closedCat = new ArrayList<>();
-            for(NetworkCategory c: dataSet.superNetwork.get().categories) {
-                (openedCategoriesProperty().contains(c) ? openedCat : closedCat).add(c);
-            }
-
-            openedCat.addAll(closedCat);
-            orderedCategoriesProperty().set(new ObservableListWrapper<>(openedCat));
-        };
-
-        openedCategoriesProperty().addListener((obs, old, categories) -> categoryObserver.run());
-        dataSet.superNetwork.addListener((obs, old, categories) -> categoryObserver.run());
     }
 
-    public DataSet getDataSet() {
-        return dataSet;
+    public void activateNetwork(final Network network) {
+        this.activeNetwork.set(network);
     }
 
-    public SetProperty<NetworkCategory> openedCategoriesProperty() {
-        return openedCategories;
+    public ReadOnlyObjectProperty<Network> activeNetworkProperty() {
+        return activeNetwork;
     }
 
-    public ListProperty<NetworkCategory> orderedCategoriesProperty() {
-        return orderedCategories;
+    public Network getActiveNetwork() {
+        return activeNetwork.get();
+    }
+
+    public ObservableList<NetworkCategory> getActiveCategories() {
+        return activeCategories.get();
+    }
+
+    public ReadOnlyListProperty<NetworkCategory> activeCategoriesProperty() {
+        return activeCategories;
     }
 
     public SetProperty<NetworkNode> highlightedNodesProperty() {
@@ -99,10 +80,6 @@ public final class MainViewModel {
 
     public SetProperty<NetworkAnnotation> highlightedAnnotations() {
         return highlightedAnnotations;
-    }
-
-    public ObjectProperty<Network> activeNetworkProperty() {
-        return activeNetwork;
     }
 
     /**

@@ -3,7 +3,8 @@ package org.cwi.examine;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.cwi.examine.data.csv.DataSet;
+import org.cwi.examine.data.csv.NetworkCSVReader;
+import org.cwi.examine.model.Network;
 import org.cwi.examine.presentation.main.MainSection;
 
 import java.io.IOException;
@@ -14,11 +15,8 @@ import java.io.IOException;
 public class App extends Application {
 
     private static final String TITLE = "eXamineS";
-
+    private static final String CSV_FILE_PATH = "data/";
     private static final String USER_AGENT_STYLESHEET = "UserAgentStylesheet.css";
-
-    private final DataSet dataSet = new DataSet();
-    private MainSection mainSection = new MainSection(dataSet);
 
     public static void main(String[] args) {
         launch(args);
@@ -32,18 +30,15 @@ public class App extends Application {
 
         primaryStage.setTitle(TITLE);
 
+        // Load network from standard path and show main section.
+        final Network network = new NetworkCSVReader(CSV_FILE_PATH).readNetwork();
+        final MainSection mainSection = new MainSection(network);
+
         final Scene scene = new Scene(mainSection.getView());
         primaryStage.setScene(scene);
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
         primaryStage.show();
-
-        dataSet.load(); // Load from filesystem.
-    }
-
-    @Override
-    public void stop() throws Exception {
-        mainSection.exit();
     }
 
 }

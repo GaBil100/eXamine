@@ -7,25 +7,25 @@ import java.util.List;
 /**
  * Category of elements.
  */
-public class NetworkCategory<E extends NetworkElement> {
+public class NetworkCategory {
 
     public static int MAXIMUM_SIZE = 50;
 
     public final String name;
-    public final List<E> annotations;
+    public final List<NetworkAnnotation> annotations;
 
-    public NetworkCategory(final String name, final List<E> annotations) {
+    public NetworkCategory(final String name, final List<NetworkAnnotation> annotations) {
         this.name = name;
 
         // Sort annotations by score, then alphabet.
-        final List<E> topAnnotations = new ArrayList<>(annotations);
+        final List<NetworkAnnotation> topAnnotations = new ArrayList<>(annotations);
         Collections.sort(topAnnotations, (lS, rS) -> {
             int result;
 
-            if(lS.score == rS.score) {
-                result = lS.name.compareTo(rS.name);
+            if(lS.getScore() == rS.getScore()) {
+                result = lS.getName().compareTo(rS.getName());
             } else {
-                result = Double.isNaN(lS.score) || lS.score > rS.score ? 1 : -1;
+                result = Double.isNaN(lS.getScore()) || lS.getScore() > rS.getScore() ? 1 : -1;
             }
 
             return result;

@@ -1,0 +1,16 @@
+.network-node {
+    -fx-background-color:   -base-intensity-high;
+    -fx-border-width:       2px;
+    -fx-border-color:       -base-intensity-low;
+
+    -fx-padding:            0 .5em 0 .5em;
+    -fx-border-radius:      2em;    /* High value to guarantee circular ends. */
+    -fx-background-radius:  2em;
+
+    -fx-cursor:             hand;
+}
+
+.network-link {
+    -fx-stroke-width:   2px;
+    -fx-stroke:         -base-intensity-low;
+}

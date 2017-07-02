@@ -2,56 +2,74 @@ package org.cwi.examine.presentation.nodelinkcontour;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ListBinding;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.PathElement;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import org.cwi.examine.model.Network;
 import org.cwi.examine.model.NetworkAnnotation;
 import org.cwi.examine.model.NetworkNode;
-import org.cwi.examine.presentation.graphics.Geometry;
+import org.cwi.examine.presentation.nodelinkcontour.layout.Contours;
 import org.cwi.examine.presentation.nodelinkcontour.layout.Layout;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static javafx.beans.binding.Bindings.createObjectBinding;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.observableHashMap;
 
 /**
  * Node, link, and contour depiction of a network with annotations.
  */
-public class NodeLinkContourView extends Pane {
+public class NodeLinkContourView extends ScrollPane {
 
-    private final SimpleObjectProperty<Network> network = new SimpleObjectProperty<>();
-    private final ObservableMap<NetworkAnnotation, Double> selectedAnnotations = FXCollections.observableHashMap();
+    private final ObjectProperty<Network> network = new SimpleObjectProperty<>();
+    private final ListProperty<NetworkAnnotation> selectedAnnotations = new SimpleListProperty<>(observableArrayList());
+    private final MapProperty<NetworkAnnotation, Double> annotationWeights = new SimpleMapProperty<>(observableHashMap());
 
     private Layout layout = null;
-    private final ObservableMap<NetworkNode, Point2D> nodePositions = FXCollections.observableHashMap();
-    private final ObservableMap<DefaultEdge, Point2D[]> linkPositions = FXCollections.observableHashMap();
+    private final ObservableMap<NetworkNode, Point2D> nodePositions = observableHashMap();
+    private final ObservableMap<DefaultEdge, Point2D[]> linkPositions = observableHashMap();
 
-    private final NetworkElementLayer<NetworkAnnotation, Node> annotationLayer =
-            new NetworkElementLayer<>("network-annotation", this::createAnnotationRepresentation);
+    private final ContourLayer contourLayer = new ContourLayer();
     private final NetworkElementLayer<DefaultEdge, Node> linkLayer =
             new NetworkElementLayer<>("network-link", this::createLinkRepresentation);
     private final NetworkElementLayer<NetworkNode, Node> nodeLayer =
             new NetworkElementLayer<>("network-node", this::createNodeRepresentation);
+    private final Group layerStack = new Group(contourLayer, linkLayer, nodeLayer);
 
     public NodeLinkContourView() {
 
-        getChildren().setAll(annotationLayer, linkLayer, nodeLayer);
+        getStyleClass().add("node-link-contour-view");
+
+        final BorderPane layerContainer = new BorderPane(layerStack);
+        BorderPane.setAlignment(layerStack, Pos.CENTER);
+        setFitToHeight(true);
+        setFitToWidth(true);
+        setContent(layerContainer);
 
         network.addListener(this::onNetworkChange);
-        selectedAnnotations.addListener((MapChangeListener) change -> updateLayout());
+        selectedAnnotationsProperty().addListener((ListChangeListener) change -> updateLayout());
+        contourLayer.annotationsProperty().bind(selectedAnnotations);
     }
 
     private void onNetworkChange(
@@ -60,8 +78,8 @@ public class NodeLinkContourView extends Pane {
             final Network network) {
 
         updateLayout();
-        linkLayer.getElements().setAll(network.graph.edgeSet());
-        nodeLayer.getElements().setAll(network.graph.vertexSet());
+        linkLayer.elementProperty().setAll(network.graph.edgeSet());
+        nodeLayer.elementProperty().setAll(network.graph.vertexSet());
     }
 
     private void updateLayout() {
@@ -69,43 +87,31 @@ public class NodeLinkContourView extends Pane {
         if(network == null) {
             layout = null;
         } else {
-            layout = new Layout(network.get(), selectedAnnotations, layout);
+            layout = new Layout(network.get(), annotationWeights, layout);
 
             final Map<NetworkNode, Point2D> newPositions = new HashMap<>();
-            getNetwork().graph.vertexSet().forEach(node -> newPositions.put(node, layout.position(node)));
+            networkProperty().get().graph.vertexSet().forEach(node -> newPositions.put(node, layout.position(node)));
             nodePositions.clear();
             nodePositions.putAll(newPositions);
 
             linkPositions.clear();
             linkPositions.putAll(layout.linkPositions());
-        }
-    }
 
-    private Node createAnnotationRepresentation(final NetworkAnnotation annotation) {
-        return new Rectangle(10, 10, 10, 10);
+            contourLayer.contoursProperty().clear();
+            contourLayer.contoursProperty().putAll(selectedAnnotations.stream()
+                    .map(annotation -> new Contours(annotation, layout))
+                    .collect(Collectors.toMap(Contours::getAnnotation, Function.identity())));
+        }
     }
 
     private Node createLinkRepresentation(final DefaultEdge edge) {
 
-        final Path path = new Path();
-        Bindings.bindContent(path.getElements(), new ListBinding<PathElement>() {
+        final LinkRepresentation representation = new LinkRepresentation(edge);
+        representation.controlPointsProperty().bind(createObjectBinding(
+                () -> FXCollections.observableList(asList(linkPositions.getOrDefault(edge, new Point2D[]{}))),
+                linkPositions));
 
-            {
-                bind(linkPositions);
-            }
-
-            @Override
-            protected ObservableList<PathElement> computeValue() {
-                final Point2D[] positions = linkPositions.get(edge);
-                return FXCollections.observableList(
-                        positions == null ?
-                                Collections.emptyList() :
-                                Geometry.getArc(positions[0], positions[1], positions[2])
-                );
-            }
-        });
-
-        return path;
+        return representation;
     }
 
     private Node createNodeRepresentation(final NetworkNode node) {
@@ -131,20 +137,20 @@ public class NodeLinkContourView extends Pane {
         return Bindings.createDoubleBinding(() -> nodePositions.getOrDefault(node, Point2D.ZERO).getY(), nodePositions);
     }
 
-    public Network getNetwork() {
-        return network.get();
-    }
-
-    public SimpleObjectProperty<Network> networkProperty() {
+    public ObjectProperty<Network> networkProperty() {
         return network;
     }
 
-    public void setNetwork(Network network) {
-        this.network.set(network);
+    public ListProperty<NetworkAnnotation> selectedAnnotationsProperty() {
+        return selectedAnnotations;
     }
 
-    public ObservableMap<NetworkAnnotation, Double> getSelectedAnnotations() {
-        return selectedAnnotations;
+    public MapProperty<NetworkAnnotation, Double> annotationWeightsProperty() {
+        return annotationWeights;
+    }
+
+    public MapProperty<NetworkAnnotation, Color> annotationColorsProperty() {
+        return contourLayer.colorsProperty();
     }
 
     @Override

@@ -1,3 +1,10 @@
+
+.node-link-contour-view {
+    -fx-border-width:   1px;
+    -fx-border-color:   -base-intensity-low;
+    -fx-padding:        .5em;
+}
+
 .network-node {
     -fx-background-color:   -base-intensity-high;
     -fx-border-width:       2px;
@@ -11,6 +18,15 @@
 }
 
 .network-link {
+    -fx-stroke-width:   2px;
+    -fx-stroke:         -base-intensity-low;
+}
+
+.network-contour-ribbon {
+    -fx-stroke-width:   0px;
+}
+
+.network-contour-hard-outline {
     -fx-stroke-width:   2px;
     -fx-stroke:         -base-intensity-low;
 }

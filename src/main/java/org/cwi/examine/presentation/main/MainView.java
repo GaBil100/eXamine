@@ -1,10 +1,8 @@
 package org.cwi.examine.presentation.main;
 
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import org.cwi.examine.presentation.main.category.AnnotationOverview;
+import org.cwi.examine.presentation.main.annotation.AnnotationTabs;
 import org.cwi.examine.presentation.nodelinkcontour.NodeLinkContourView;
 
 /**
@@ -13,16 +11,16 @@ import org.cwi.examine.presentation.nodelinkcontour.NodeLinkContourView;
 public class MainView extends BorderPane {
 
     private final NodeLinkContourView nodeLinkContourView = new NodeLinkContourView();
-    private final AnnotationOverview annotationOverview = new AnnotationOverview();
+    private final AnnotationTabs annotationOverview = new AnnotationTabs();
 
     public MainView() {
 
-        // Center network view in a scroll pane.
-        final ScrollPane nodeLinkContourScroll = new ScrollPane(nodeLinkContourView);
-        BorderPane.setAlignment(nodeLinkContourView, Pos.CENTER);
-        setCenter(nodeLinkContourScroll);
+        getStyleClass().add("main-view");
 
-        // Annotation overview at the left side.
+        final BorderPane nodeLinkContourContainer = new BorderPane(nodeLinkContourView);
+        nodeLinkContourContainer.getStyleClass().add("node-link-contour-container");
+        setCenter(nodeLinkContourContainer);
+
         annotationOverview.setSide(Side.RIGHT);
         setLeft(annotationOverview);
     }
@@ -31,8 +29,12 @@ public class MainView extends BorderPane {
         return nodeLinkContourView;
     }
 
-    public AnnotationOverview getAnnotationOverview() {
+    public AnnotationTabs getAnnotationOverview() {
         return annotationOverview;
     }
 
+    @Override
+    public String getUserAgentStylesheet() {
+        return MainView.class.getResource("MainView.css").toExternalForm();
+    }
 }

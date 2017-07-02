@@ -1,57 +1,94 @@
 package org.cwi.examine.presentation.main;
 
-import com.sun.javafx.collections.ObservableListWrapper;
-import com.sun.javafx.collections.ObservableMapWrapper;
-import com.sun.javafx.collections.ObservableSetWrapper;
-import javafx.beans.property.*;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
-import org.cwi.examine.model.*;
+import javafx.collections.ObservableSet;
+import javafx.scene.paint.Color;
+import org.cwi.examine.model.Network;
+import org.cwi.examine.model.NetworkAnnotation;
+import org.cwi.examine.model.NetworkCategory;
+import org.cwi.examine.model.NetworkNode;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import static javafx.beans.binding.Bindings.createObjectBinding;
 import static javafx.collections.FXCollections.observableArrayList;
-import static javafx.collections.FXCollections.observableList;
+import static javafx.collections.FXCollections.observableHashMap;
+import static javafx.collections.FXCollections.observableSet;
 
 /**
  * MainViewModel of network with interaction states.
  */
 public final class MainViewModel {
 
+    private static final double DEFAULT_ANNOTATION_WEIGHT = 1;
+
     private final ObjectProperty<Network> activeNetwork = new SimpleObjectProperty<>(new Network());
-    private final ListProperty<NetworkCategory> activeCategories = new SimpleListProperty<>(observableArrayList());
 
-    private final SetProperty<NetworkNode> highlightedNodes;
-    private final SetProperty<DefaultEdge> highlightedLinks;
-    private final SetProperty<NetworkAnnotation> highlightedAnnotations;
+    private final ObservableList<NetworkCategory> categories = observableArrayList();
 
-    // Included sets and the weight that has been assigned to them.
-    private final ObservableMap<NetworkAnnotation, Double> activeSetMap;
+    private final ObservableSet<NetworkNode> highlightedNodes = observableSet();
+    private final ObservableSet<DefaultEdge> highlightedLinks = observableSet();
+    private final ObservableSet<NetworkAnnotation> highlightedAnnotations = observableSet();
 
-    // List of active sets with a somewhat stable ordering.
-    private final ObservableList<NetworkAnnotation> activeSetList;
+    private final ListProperty<NetworkAnnotation> selectedAnnotations = new SimpleListProperty<>(observableArrayList());
+    private final MapProperty<NetworkAnnotation, Double> annotationWeights = new SimpleMapProperty<>(observableHashMap());
+    private final AnnotationColors annotationColors = new AnnotationColors();
 
-    // Selected set or protein.
-    private ObjectProperty<NetworkElement> selected;
-
-    public MainViewModel() {
-
-        activeCategories.bind(createObjectBinding(() -> observableList(getActiveNetwork().categories), activeNetwork));
-
-        this.highlightedNodes = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
-        this.highlightedLinks = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
-        this.highlightedAnnotations = new SimpleSetProperty<>(new ObservableSetWrapper<>(new HashSet<>()));
-        this.activeSetMap = new ObservableMapWrapper<>(new HashMap<>());
-        this.activeSetList = new ObservableListWrapper<>(new ArrayList<>());
-        this.selected = new SimpleObjectProperty<>(null);
+    MainViewModel() {
+        activeNetwork.addListener((obs, oldNetwork, network) -> categories.setAll(network.categories));
     }
 
     public void activateNetwork(final Network network) {
         this.activeNetwork.set(network);
+    }
+
+    /**
+     * Add set with an initial weight, report on success
+     * (there is a maximum number of selected sets).
+     */
+    public void toggleAnnotation(final NetworkAnnotation annotation) {
+
+        if(selectedAnnotations.contains(annotation)) {
+            selectedAnnotationsProperty().remove(annotation);
+            annotationWeightsProperty().remove(annotation);
+            annotationColors.releaseColor(annotation);
+        } else {
+            annotationColors.assignColor(annotation);
+            annotationWeightsProperty().put(annotation, DEFAULT_ANNOTATION_WEIGHT);
+            selectedAnnotationsProperty().add(annotation);
+        }
+    }
+
+    /**
+     * Adjust the weight of a set by the given change.
+     */
+    public void changeWeight(NetworkAnnotation proteinSet, double weightChange) {
+        double currentWeight = annotationWeightsProperty().get(proteinSet);
+        double newWeight = Math.max(1f, currentWeight + weightChange);
+        annotationWeightsProperty().put(proteinSet, newWeight);
+    }
+
+    public ObservableList<NetworkCategory> getCategories() {
+        return categories;
+    }
+
+    public ReadOnlyMapProperty<NetworkAnnotation, Double> annotationWeightsProperty() {
+        return annotationWeights;
+    }
+
+    public ReadOnlyListProperty<NetworkAnnotation> selectedAnnotationsProperty() {
+        return selectedAnnotations;
+    }
+
+    public ReadOnlyMapProperty<NetworkAnnotation, Color> annotationColorProperty() {
+        return annotationColors.colorMapProperty();
     }
 
     public ReadOnlyObjectProperty<Network> activeNetworkProperty() {
@@ -62,85 +99,15 @@ public final class MainViewModel {
         return activeNetwork.get();
     }
 
-    public ObservableList<NetworkCategory> getActiveCategories() {
-        return activeCategories.get();
-    }
-
-    public ReadOnlyListProperty<NetworkCategory> activeCategoriesProperty() {
-        return activeCategories;
-    }
-
-    public SetProperty<NetworkNode> highlightedNodesProperty() {
+    public ObservableSet<NetworkNode> getHighlightedNodes() {
         return highlightedNodes;
     }
 
-    public SetProperty<DefaultEdge> highlightedLinksProperty() {
+    public ObservableSet<DefaultEdge> getHighlightedLinksProperty() {
         return highlightedLinks;
     }
 
-    public SetProperty<NetworkAnnotation> highlightedAnnotations() {
+    public ObservableSet<NetworkAnnotation> getHighlightedAnnotations() {
         return highlightedAnnotations;
-    }
-
-    /**
-     * Add set with an initial weight, report on success
-     * (there is a maximum number of selected sets).
-     */
-    public boolean add(NetworkAnnotation proteinSet, double weight) {
-        boolean added = activeAnnotationListProperty().size() < SetColors.palette.length;
-
-        if(added) {
-            activeAnnotationMapProperty().put(proteinSet, weight);
-            activeAnnotationListProperty().add(proteinSet);
-        }
-
-        return added;
-    }
-
-    /**
-     * Remove set.
-     */
-    public void remove(NetworkAnnotation proteinSet) {
-        activeAnnotationMapProperty().remove(proteinSet);
-        activeAnnotationListProperty().remove(proteinSet);
-    }
-
-    /**
-     * Adjust the weight of a set by the given change.
-     */
-    public void changeWeight(NetworkAnnotation proteinSet, double weightChange) {
-        double currentWeight = activeAnnotationMapProperty().get(proteinSet);
-        double newWeight = Math.max(1f, currentWeight + weightChange);
-        activeAnnotationMapProperty().put(proteinSet, newWeight);
-    }
-
-    public ObservableMap<NetworkAnnotation, Double> activeAnnotationMapProperty() {
-        return activeSetMap;
-    }
-
-    public ObservableList<NetworkAnnotation> activeAnnotationListProperty() {
-        return activeSetList;
-    }
-
-    public ObjectProperty<NetworkElement> selectedElementProperty() {
-        return selected;
-    }
-
-    /**
-     * Select a set or protein, null iff no element is selected.
-     */
-    public void select(NetworkElement element) {
-        selected.set(element);
-
-        // Element is a set -> remove from or include in active sets.
-        if(element != null && element instanceof NetworkAnnotation) {
-            NetworkAnnotation elSet = (NetworkAnnotation) element;
-
-            if(activeAnnotationListProperty().contains(elSet)) {
-                remove(elSet);
-            } else {
-                add(elSet, 1);
-            }
-        }
     }
 }

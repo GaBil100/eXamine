@@ -1,0 +1,43 @@
+.annotation-tabs {
+    -fx-min-width:  36em;
+}
+
+.annotation-tab {
+    -fx-padding:    .5em;
+}
+
+.name-column {
+    -fx-min-width:  0;
+    -fx-pref-width: 21em;
+}
+
+.score-column {
+    -fx-min-width:  6em;
+    -fx-pref-width: 6em;
+}
+
+.table-row-cell {
+    -fx-cursor: hand;
+}
+
+.table-row-cell:empty {
+    -fx-cursor: pointer;
+}
+
+.color-cell {
+    -fx-alignment:  center;
+}
+
+.color-cell .marker {
+    -fx-min-width:      1.25em;
+    -fx-max-width:      1.25em;
+    -fx-min-height:     1.25em;
+    -fx-max-height:     1.25em;
+
+    -fx-border-width:       2px;
+    -fx-border-color:       -base-intensity-low;
+    -fx-border-radius:      6px;
+
+    -fx-background-insets:  1px;
+    -fx-background-radius:  6px;
+}

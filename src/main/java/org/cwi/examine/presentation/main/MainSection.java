@@ -24,8 +24,14 @@ public class MainSection implements Section {
 
     private void bindViewModel() {
 
-        view.getAnnotationOverview().categoriesProperty().bind(viewModel.activeCategoriesProperty());
+        view.getAnnotationOverview().categoriesProperty().bindContent(viewModel.getCategories());
+        view.getAnnotationOverview().annotationColorsProperty().bindContent(viewModel.annotationColorProperty());
+        view.getAnnotationOverview().onToggleAnnotationProperty().set(viewModel::toggleAnnotation);
+
         view.getNodeLinkContourView().networkProperty().bind(viewModel.activeNetworkProperty());
+        view.getNodeLinkContourView().selectedAnnotationsProperty().bind(viewModel.selectedAnnotationsProperty());
+        view.getNodeLinkContourView().annotationWeightsProperty().bind(viewModel.annotationWeightsProperty());
+        view.getNodeLinkContourView().annotationColorsProperty().bind(viewModel.annotationColorProperty());
     }
 
     /**

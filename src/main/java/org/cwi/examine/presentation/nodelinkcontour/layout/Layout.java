@@ -25,16 +25,6 @@ import static java.util.Comparator.comparingInt;
 
 public class Layout {
 
-    public static final int     SET_LABEL_MAX_WIDTH     = 200;
-    public static final int     SET_LABEL_MAX_LINES     = 3;
-    public static final double  LABEL_PADDING           = 4;
-    public static final double  LABEL_DOUBLE_PADDING    = 2 * LABEL_PADDING;
-    public static final double  LABEL_ROUNDING          = 16;
-    public static final double  LABEL_MARKER_RADIUS     = 6;
-    public static final double  LABEL_BAR_HEIGHT        = 25;
-    public static final double  SCORE_MIN_RADIUS        = 3;
-    public static final double  MARGIN                  = 15;
-
     public static final double  RIBBON_WIDTH    = 8;
     public static final double  RIBBON_SPACE    = 2;
     public static final double  RIBBON_EXTENT   = RIBBON_WIDTH + RIBBON_SPACE;
@@ -52,7 +42,7 @@ public class Layout {
     
     // Network and set topology.
     public final Network network;
-    public final SortedMap<NetworkAnnotation, Double> weightedAnnotations = new TreeMap<>();
+    public final Map<NetworkAnnotation, Double> weightedAnnotations = new HashMap<>();
 
     public final List<NetworkAnnotation> sets = new ArrayList<>();
     public final NetworkNode[] nodes;
@@ -76,7 +66,7 @@ public class Layout {
     private double[][] G;
     private Descent descent;
     
-    public Layout(final Network network, final Map<NetworkAnnotation, Double> weightedAnnotations, final Layout oldLayout) {
+    public Layout(Network network, Map<NetworkAnnotation, Double> weightedAnnotations, Layout oldLayout) {
         this.network = network;
         this.weightedAnnotations.putAll(weightedAnnotations);
         
@@ -212,7 +202,7 @@ public class Layout {
 
 
     // Position of the given node, (0,0) iff null.
-    private Point2D position(final RichNode node) {
+    public Point2D position(final RichNode node) {
         Point2D result;
 
         if(richIndex == null) {

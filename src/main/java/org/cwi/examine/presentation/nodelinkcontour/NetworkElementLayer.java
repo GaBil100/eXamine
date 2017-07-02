@@ -1,8 +1,7 @@
 package org.cwi.examine.presentation.nodelinkcontour;
 
-import javafx.collections.FXCollections;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
@@ -12,13 +11,14 @@ import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static javafx.collections.FXCollections.observableArrayList;
 
 class NetworkElementLayer<E, R extends Node> extends Pane {
 
     private final String representationStyleClass;
     private final Function<E, R> representationFactory;
 
-    private final ObservableList<E> elements = FXCollections.observableArrayList();
+    private final SimpleListProperty<E> elements = new SimpleListProperty<>(observableArrayList());
 
     private final Map<E, R> representations = new HashMap<>();
 
@@ -44,7 +44,7 @@ class NetworkElementLayer<E, R extends Node> extends Pane {
         return representation;
     }
 
-    public ObservableList<E> getElements() {
+    public SimpleListProperty<E> elementProperty() {
         return elements;
     }
 

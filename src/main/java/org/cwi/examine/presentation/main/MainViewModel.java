@@ -6,11 +6,13 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlySetProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.scene.paint.Color;
 import org.cwi.examine.model.Network;
 import org.cwi.examine.model.NetworkAnnotation;
@@ -23,7 +25,7 @@ import static javafx.collections.FXCollections.observableHashMap;
 import static javafx.collections.FXCollections.observableSet;
 
 /**
- * MainViewModel of network with interaction states.
+ * View model of the main section. Maintains exploration state of a network that is being viewed.
  */
 public final class MainViewModel {
 
@@ -33,29 +35,41 @@ public final class MainViewModel {
 
     private final ObservableList<NetworkCategory> categories = observableArrayList();
 
-    private final ObservableSet<NetworkNode> highlightedNodes = observableSet();
-    private final ObservableSet<DefaultEdge> highlightedLinks = observableSet();
-    private final ObservableSet<NetworkAnnotation> highlightedAnnotations = observableSet();
-
     private final ListProperty<NetworkAnnotation> selectedAnnotations = new SimpleListProperty<>(observableArrayList());
     private final MapProperty<NetworkAnnotation, Double> annotationWeights = new SimpleMapProperty<>(observableHashMap());
     private final AnnotationColors annotationColors = new AnnotationColors();
 
-    MainViewModel() {
-        activeNetwork.addListener((obs, oldNetwork, network) -> categories.setAll(network.categories));
-    }
+    private final SetProperty<NetworkNode> highlightedNodes = new SimpleSetProperty<>(observableSet());
+    private final SetProperty<DefaultEdge> highlightedLinks = new SimpleSetProperty<>(observableSet());
+    private final SetProperty<NetworkAnnotation> highlightedAnnotations = new SimpleSetProperty<>(observableSet());
 
-    public void activateNetwork(final Network network) {
-        this.activeNetwork.set(network);
+    // -- Actions.
+
+    /**
+     * Activate the given network as being explored. This clears the entire exploration state.
+     *
+     * @param network The network to activate as being explored.
+     */
+    public void activateNetwork(Network network) {
+
+        activeNetwork.set(network);
+        categories.setAll(network.getCategories());
+        selectedAnnotations.clear();
+        annotationWeights.clear();
+        annotationColors.clear();
+        highlightedNodes.clear();
+        highlightedLinks.clear();
+        highlightedAnnotations.clear();
     }
 
     /**
-     * Add set with an initial weight, report on success
-     * (there is a maximum number of selected sets).
+     * Toggle the selected state of the given annotation.
+     *
+     * @param annotation The annotation to toggle the selected state for.
      */
-    public void toggleAnnotation(final NetworkAnnotation annotation) {
+    public void toggleAnnotation(NetworkAnnotation annotation) {
 
-        if(selectedAnnotations.contains(annotation)) {
+        if (selectedAnnotations.contains(annotation)) {
             selectedAnnotationsProperty().remove(annotation);
             annotationWeightsProperty().remove(annotation);
             annotationColors.releaseColor(annotation);
@@ -67,12 +81,49 @@ public final class MainViewModel {
     }
 
     /**
-     * Adjust the weight of a set by the given change.
+     * Adjust the weight (importance) of the given annotation by the given weight change.
+     *
+     * @param annotation   The annotation to change the weight of.
+     * @param weightChange The number by which to change the weight.
      */
-    public void changeWeight(NetworkAnnotation proteinSet, double weightChange) {
-        double currentWeight = annotationWeightsProperty().get(proteinSet);
-        double newWeight = Math.max(1f, currentWeight + weightChange);
-        annotationWeightsProperty().put(proteinSet, newWeight);
+    public void changeAnnotationWeight(NetworkAnnotation annotation, double weightChange) {
+
+        final double currentWeight = annotationWeightsProperty().get(annotation);
+        final double newWeight = Math.max(1f, currentWeight + weightChange);
+        annotationWeightsProperty().put(annotation, newWeight);
+    }
+
+    /**
+     * Highlight the given annotations, which also highlights the nodes and links
+     * that are fully contained by individual annotations.
+     *
+     * @param annotations The annotation to highlight.
+     */
+    public void highlightAnnotations(NetworkAnnotation... annotations) {
+
+        clearHighlights();
+
+        for (NetworkAnnotation annotation : annotations) {
+            highlightedNodes.addAll(annotation.getNodes());
+            highlightedAnnotations.add(annotation);
+        }
+    }
+
+    /**
+     * Clears the highlighted state of nodes, links, and contours.
+     */
+    public void clearHighlights() {
+
+        highlightedNodes.clear();
+        highlightedLinks.clear();
+        highlightedAnnotations.clear();
+    }
+
+
+    // -- Accessors.
+
+    public ReadOnlyObjectProperty<Network> activeNetworkProperty() {
+        return activeNetwork;
     }
 
     public ObservableList<NetworkCategory> getCategories() {
@@ -91,23 +142,16 @@ public final class MainViewModel {
         return annotationColors.colorMapProperty();
     }
 
-    public ReadOnlyObjectProperty<Network> activeNetworkProperty() {
-        return activeNetwork;
-    }
-
-    public Network getActiveNetwork() {
-        return activeNetwork.get();
-    }
-
-    public ObservableSet<NetworkNode> getHighlightedNodes() {
+    public ReadOnlySetProperty<NetworkNode> highlightedNodesProperty() {
         return highlightedNodes;
     }
 
-    public ObservableSet<DefaultEdge> getHighlightedLinksProperty() {
+    public ReadOnlySetProperty<DefaultEdge> highlightedLinksProperty() {
         return highlightedLinks;
     }
 
-    public ObservableSet<NetworkAnnotation> getHighlightedAnnotations() {
+    public ReadOnlySetProperty<NetworkAnnotation> highlightedAnnotationsProperty() {
         return highlightedAnnotations;
     }
+
 }

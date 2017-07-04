@@ -37,7 +37,7 @@ public class Contours {
         final double smoothRadius = 4 * Layout.RIBBON_EXTENT;
 
         final List<Geometry> vertexHulls = new ArrayList<>();
-        for (NetworkNode v : annotation.elements) {
+        for (NetworkNode v : annotation.getNodes()) {
             // Radius of set around vertex.
             final double vertexIndex = 1.01 + layout.nodeMemberships.get(v).indexOf(annotation);
             final double edgeRadius = vertexIndex * Layout.RIBBON_EXTENT + smoothRadius;
@@ -69,7 +69,7 @@ public class Contours {
                 final Point2D tP = layout.position(tN.element);
                 final Layout.RichNode dN = e.subNode;
                 final Point2D dP = layout.position(dN);
-                final boolean hasCore = layout.network.graph.containsEdge(sN.element, tN.element);
+                final boolean hasCore = layout.network.getGraph().containsEdge(sN.element, tN.element);
 
                 // Radius of set around vertex.
                 final double edgeIndex = 0.51 + ind;
@@ -84,8 +84,8 @@ public class Contours {
         }
 
         // Vertex anti-membership hulls.
-        final Set<NetworkNode> antiVertices = new HashSet<>(layout.network.graph.vertexSet());
-        antiVertices.removeAll(annotation.elements);
+        final Set<NetworkNode> antiVertices = new HashSet<>(layout.network.getGraph().vertexSet());
+        antiVertices.removeAll(annotation.getNodes());
         final List<Geometry> vertexAntiHulls = new ArrayList<Geometry>();
         for (final NetworkNode v : antiVertices) {
             // Radius of vertex (assuming rounded rectangle).

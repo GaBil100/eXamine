@@ -78,8 +78,8 @@ public class NodeLinkContourView extends ScrollPane {
             final Network network) {
 
         updateLayout();
-        linkLayer.elementProperty().setAll(network.graph.edgeSet());
-        nodeLayer.elementProperty().setAll(network.graph.vertexSet());
+        linkLayer.elementProperty().setAll(network.getGraph().edgeSet());
+        nodeLayer.elementProperty().setAll(network.getGraph().vertexSet());
     }
 
     private void updateLayout() {
@@ -90,7 +90,7 @@ public class NodeLinkContourView extends ScrollPane {
             layout = new Layout(network.get(), annotationWeights, layout);
 
             final Map<NetworkNode, Point2D> newPositions = new HashMap<>();
-            networkProperty().get().graph.vertexSet().forEach(node -> newPositions.put(node, layout.position(node)));
+            networkProperty().get().getGraph().vertexSet().forEach(node -> newPositions.put(node, layout.position(node)));
             nodePositions.clear();
             nodePositions.putAll(newPositions);
 

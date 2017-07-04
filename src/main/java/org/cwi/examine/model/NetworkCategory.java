@@ -1,48 +1,63 @@
 package org.cwi.examine.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.Comparator.comparingDouble;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
- * Category of elements.
+ * Category of network annotations.
  */
 public class NetworkCategory {
 
-    public static int MAXIMUM_SIZE = 50;
+    private static final Comparator<NetworkAnnotation> ANNOTATION_COMPARATOR =
+            comparingDouble(NetworkAnnotation::getScore).thenComparing(NetworkAnnotation::getName);
 
-    public final String name;
-    public final List<NetworkAnnotation> annotations;
+    private final String name;   // Serves as unique identifier.
+    private final List<NetworkAnnotation> annotations;
 
-    public NetworkCategory(final String name, final List<NetworkAnnotation> annotations) {
-        this.name = name;
+    public NetworkCategory(String name, List<NetworkAnnotation> annotations) {
+        this.name = requireNonNull(name);
+        this.annotations = unmodifiableList(annotations.stream().sorted(ANNOTATION_COMPARATOR).collect(toList()));
+    }
 
-        // Sort annotations by score, then alphabet.
-        final List<NetworkAnnotation> topAnnotations = new ArrayList<>(annotations);
-        Collections.sort(topAnnotations, (lS, rS) -> {
-            int result;
+    /**
+     * Filter annotations to only contain nodes that pass the given predicate.
+     * Annotations that have no nodes left will be filtered out as well.
+     *
+     * @param predicate Defines whether a node is to be included or not.
+     * @return Category with non-empty annotations that contain only nodes that pass the given filter.
+     */
+    public NetworkCategory filterNodes(Predicate<NetworkNode> predicate) {
+        return new NetworkCategory(
+                getName(),
+                getAnnotations().stream()
+                        .map(annotation -> annotation.filterNodes(predicate))
+                        .filter(annotation -> !annotation.getNodes().isEmpty())
+                        .collect(toList()));
+    }
 
-            if(lS.getScore() == rS.getScore()) {
-                result = lS.getName().compareTo(rS.getName());
-            } else {
-                result = Double.isNaN(lS.getScore()) || lS.getScore() > rS.getScore() ? 1 : -1;
-            }
+    public String getName() {
+        return name;
+    }
 
-            return result;
-        });
-
-        this.annotations = topAnnotations.subList(0, Math.min(topAnnotations.size(), MAXIMUM_SIZE));
+    public List<NetworkAnnotation> getAnnotations() {
+        return annotations;
     }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 23 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
         return hash;
     }
 
@@ -55,7 +70,7 @@ public class NetworkCategory {
             return false;
         }
         final NetworkCategory other = (NetworkCategory) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        if ((this.getName() == null) ? (other.getName() != null) : !this.getName().equals(other.getName())) {
             return false;
         }
         return true;

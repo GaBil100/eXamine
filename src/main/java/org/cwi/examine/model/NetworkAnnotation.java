@@ -1,26 +1,36 @@
 package org.cwi.examine.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-
 import java.util.Set;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections.SetUtils.unmodifiableSet;
 
 /**
  * Annotation of a group of network nodes.
  */
 public class NetworkAnnotation extends NetworkElement {
 
-    public final List<NetworkNode> elements = new ArrayList<>();
-    public final Set<NetworkNode> set = new HashSet<>();
+    private final Set<NetworkNode> nodes;
 
-    public NetworkAnnotation(final String identifier, final String name, final String url, final double score) {
+    public NetworkAnnotation(String identifier, String name, String url, double score, Set<NetworkNode> nodes) {
         super(identifier, name, url, score);
+
+        this.nodes = unmodifiableSet(new HashSet<>(nodes));
     }
 
-    public void addMember(final NetworkNode node) {
-        elements.add(node);
-        set.add(node);
+    public NetworkAnnotation filterNodes(Predicate<NetworkNode> predicate) {
+        return new NetworkAnnotation(
+                getIdentifier(),
+                getName(),
+                getUrl(),
+                getScore(),
+                getNodes().stream().filter(predicate).collect(toSet()));
     }
-    
+
+    public Set<NetworkNode> getNodes() {
+        return nodes;
+    }
+
 }

@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -32,23 +33,25 @@ class AnnotationTab extends Tab {
     private final TableColumn<NetworkAnnotation, String> nameColumn = new TableColumn<>();
     private final TableColumn<NetworkAnnotation, Double> scoreColumn = new TableColumn<>("Score");
 
-    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty = new SimpleObjectProperty<>(c -> {
+    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotation = new SimpleObjectProperty<>(c -> {
+    });
+    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onHighlightAnnotations = new SimpleObjectProperty<>(c -> {
     });
 
     AnnotationTab(final NetworkCategory category) {
 
         // Tab.
         setClosable(false);
-        setText(category.name);
+        setText(category.getName());
 
         // Table.
-        annotationTable = new TableView<>(observableList(category.annotations));
+        annotationTable = new TableView<>(observableList(category.getAnnotations()));
 
         final BorderPane content = new BorderPane(annotationTable);
         content.getStyleClass().add("annotation-tab");
         setContent(content);
 
-        nameColumn.setText(category.name);
+        nameColumn.setText(category.getName());
 
         // Cell value factories.
         colorColumn.setCellValueFactory(this::bindColorValue);
@@ -67,7 +70,13 @@ class AnnotationTab extends Tab {
 
         final AnnotationSelectionModel selectionModel = new AnnotationSelectionModel(annotationTable);
         annotationTable.setSelectionModel(selectionModel);
-        selectionModel.onToggleAnnotationProperty().bind(onToggleAnnotationProperty);
+        selectionModel.onToggleAnnotationProperty().bind(onToggleAnnotation);
+
+        annotationTable.setRowFactory(this::createRow);
+    }
+
+    private TableRow<NetworkAnnotation> createRow(TableView<NetworkAnnotation> view) {
+        return new TableRow<>();
     }
 
     private ObservableValue<Optional<Color>> bindColorValue(
@@ -91,7 +100,7 @@ class AnnotationTab extends Tab {
 
                 final Pane marker;
 
-                if(empty || !optionalColor.isPresent()) {
+                if (empty || !optionalColor.isPresent()) {
                     marker = null;
                 } else {
                     marker = new Pane();
@@ -112,14 +121,16 @@ class AnnotationTab extends Tab {
                 color.getOpacity() + ")";
     }
 
-    SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty() {
-        return onToggleAnnotationProperty;
-    }
-
     MapProperty<NetworkAnnotation, Color> annotationColorsProperty() {
         return annotationColors;
     }
 
+    SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty() {
+        return onToggleAnnotation;
+    }
 
+    SimpleObjectProperty<Consumer<NetworkAnnotation>> onHighlightAnnotationsProperty() {
+        return onHighlightAnnotations;
+    }
 
 }

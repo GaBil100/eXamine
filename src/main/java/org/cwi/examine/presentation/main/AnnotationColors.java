@@ -15,7 +15,7 @@ import static javafx.scene.paint.Color.rgb;
 
 class AnnotationColors {
 
-    private static final Color[] COLOR_PALETTE = new Color[]{
+    private static final Color[] PALETTE = new Color[]{
             rgb(141, 211, 199),
             rgb(255, 255, 179),
             rgb(190, 186, 218),
@@ -28,7 +28,7 @@ class AnnotationColors {
             rgb(255, 237, 111)
     };
 
-    private final LinkedList<Color> availableColors = new LinkedList<>(asList(COLOR_PALETTE));
+    private final LinkedList<Color> availableColors = new LinkedList<>(asList(PALETTE));
     private final MapProperty<NetworkAnnotation, Color> colorMap = new SimpleMapProperty<>(observableHashMap());
 
     /**
@@ -73,6 +73,15 @@ class AnnotationColors {
         } else {
             assignColor(annotation);
         }
+    }
+
+    /**
+     * Clear all assigned colors, effectively making the entire palette available again.
+     */
+    void clear() {
+        colorMap.clear();
+        availableColors.clear();
+        availableColors.addAll(asList(PALETTE));
     }
 
     /**

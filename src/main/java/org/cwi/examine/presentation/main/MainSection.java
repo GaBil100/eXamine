@@ -39,12 +39,9 @@ public class MainSection implements Section {
      */
     private void initializeActiveNetwork() {
 
-        final Network moduleNetwork = Network.induce(superNetwork.modules, superNetwork);
+        final Network moduleNetwork = Network.induce(superNetwork.getModules(), superNetwork);
 
         viewModel.activateNetwork(moduleNetwork);
-
-        System.out.println(superNetwork.graph.vertexSet().size());
-        System.out.println(moduleNetwork.graph.vertexSet().size());
     }
 
     @Override

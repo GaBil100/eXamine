@@ -50,11 +50,11 @@ public class Network {
                 .findFirst()
                 .orElse(new NetworkCategory("Module", Collections.emptyList()));
 
-        Set<NetworkNode> nodes = graph.vertexSet();
-        minNodeScore = nodes.stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
-        maxNodeScore = nodes.stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
-        minAnnotationScore = getAnnotations().stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
-        maxAnnotationScore = getAnnotations().stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
+        final Set<NetworkNode> nodes = graph.vertexSet();
+        this.minNodeScore = nodes.stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
+        this.maxNodeScore = nodes.stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
+        this.minAnnotationScore = getAnnotations().stream().map(NetworkElement::getScore).min(Double::compare).orElse(0.);
+        this.maxAnnotationScore = getAnnotations().stream().map(NetworkElement::getScore).max(Double::compare).orElse(1.);
     }
 
     /**

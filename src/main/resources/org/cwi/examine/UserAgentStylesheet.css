@@ -296,7 +296,7 @@ is being used to size a border should also be in pixels.
 
     /* Background color to use for selection of list cells etc. This is when
      * the control doesn't have focus or the row of a previously selected item. */
-    -fx-selection-bar-non-focused: -base-intensity-low;
+    -fx-selection-bar-non-focused: -fx-selection-bar;
 
     /* The color to use as -fx-text-fill when painting text on top of
      * backgrounds filled with -fx-selection-bar.
@@ -1469,16 +1469,17 @@ is being used to size a border should also be in pixels.
     -fx-text-fill: -fx-text-base-color;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab {
-    -fx-padding: 0.083333em 0.5em 0.0769em 0.5em;
-    -fx-border-color: -base-intensity-mid -base-intensity-mid transparent -base-intensity-mid;
+    -fx-padding: 0.083333em 0.5em 0.083333em 0.5em;
+    /*-fx-border-color: -base-intensity-mid -base-intensity-mid transparent -base-intensity-mid;*/
     -fx-border-width: 1px;
     -fx-border-insets:  0px 0px 0px 4px;
     -fx-background-insets: 0px 0px 0px 4px;
     -fx-cursor: hand;
 }
 .tab-pane > .tab-header-area > .headers-region > .tab:hover {
-    -fx-color: -fx-hover-base;
-    -fx-background-color: -fx-hover-base;
+    -fx-border-color: -base-intensity-mid -base-intensity-mid transparent -base-intensity-mid;
+    /*-fx-color: -fx-hover-base;
+    -fx-background-color: -fx-hover-base;*/
 }
 .tab-pane > .tab-header-area > .headers-region > .tab:hover:selected {
     -fx-color: -fx-base;
@@ -2079,7 +2080,7 @@ is being used to size a border should also be in pixels.
 .table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected,
 .tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell .tree-table-cell:selected {
     -fx-background: -fx-selection-bar;
-    -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
+    -fx-table-cell-border-color: -fx-selection-bar;
 }
 /* Selected when control is not focused */
 .list-cell:filled:selected,
@@ -2089,7 +2090,7 @@ is being used to size a border should also be in pixels.
 .table-row-cell:filled > .table-cell:selected,
 .tree-table-row-cell:filled > .tree-table-cell:selected {
     -fx-background: -fx-selection-bar-non-focused;
-    -fx-table-cell-border-color: derive(-fx-selection-bar-non-focused, 20%);
+    -fx-table-cell-border-color: -fx-selection-bar-non-focused;
 }
 /* focused cell (keyboard navigation) */
 .list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,

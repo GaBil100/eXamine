@@ -15,8 +15,4 @@ public class NetworkNode extends NetworkElement {
         this.annotations = new HashSet<>();
     }
 
-    public void addAnnotation(NetworkAnnotation annotation) {
-        this.annotations.add(annotation);
-    }
-
 }

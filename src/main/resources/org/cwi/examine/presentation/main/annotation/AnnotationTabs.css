@@ -16,12 +16,8 @@
     -fx-pref-width: 6em;
 }
 
-.table-row-cell {
+.table-row-cell:filled {
     -fx-cursor: hand;
-}
-
-.table-row-cell:empty {
-    -fx-cursor: pointer;
 }
 
 .color-cell {

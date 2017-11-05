@@ -5,6 +5,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -151,6 +152,14 @@ public class NodeLinkContourView extends ScrollPane {
 
     public MapProperty<NetworkAnnotation, Color> annotationColorsProperty() {
         return contourLayer.colorsProperty();
+    }
+
+    public SetProperty<NetworkNode> highlightedNodesProperty() {
+        return nodeLayer.highlightedElementsProperty();
+    }
+
+    public SetProperty<DefaultEdge> highlightedLinksProperty() {
+        return linkLayer.highlightedElementsProperty();
     }
 
     @Override

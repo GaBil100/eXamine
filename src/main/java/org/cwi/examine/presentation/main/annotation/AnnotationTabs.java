@@ -2,9 +2,11 @@ package org.cwi.examine.presentation.main.annotation;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.TabPane;
 import javafx.scene.paint.Color;
@@ -17,13 +19,17 @@ import java.util.function.Consumer;
 import static java.util.stream.Collectors.toList;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.observableHashMap;
+import static javafx.collections.FXCollections.observableSet;
 
 public class AnnotationTabs extends TabPane {
 
     private final ListProperty<NetworkCategory> categories = new SimpleListProperty<>(observableArrayList());
     private final MapProperty<NetworkAnnotation, Color> annotationColors = new SimpleMapProperty<>(observableHashMap());
+    private final SetProperty<NetworkAnnotation> highlightedAnnotations = new SimpleSetProperty<>(observableSet());
 
-    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty = new SimpleObjectProperty<>(c -> {
+    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotation = new SimpleObjectProperty<>(c -> {
+    });
+    private final SimpleObjectProperty<Consumer<List<NetworkAnnotation>>> onHighlightAnnotations = new SimpleObjectProperty<>(c -> {
     });
 
     public AnnotationTabs() {
@@ -41,8 +47,11 @@ public class AnnotationTabs extends TabPane {
     private AnnotationTab createAndBindTab(NetworkCategory category) {
 
         final AnnotationTab tab = new AnnotationTab(category);
-        tab.onToggleAnnotationProperty().bind(onToggleAnnotationProperty);
         tab.annotationColorsProperty().bind(annotationColors);
+        tab.highlightedAnnotationsProperty().bind(highlightedAnnotations);
+        tab.onToggleAnnotationProperty().bind(onToggleAnnotation);
+        tab.onHighlightAnnotationsProperty().bind(onHighlightAnnotations);
+
         return tab;
     }
 
@@ -54,8 +63,16 @@ public class AnnotationTabs extends TabPane {
         return annotationColors;
     }
 
+    public SetProperty<NetworkAnnotation> highlightedAnnotationsProperty() {
+        return highlightedAnnotations;
+    }
+
     public SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty() {
-        return onToggleAnnotationProperty;
+        return onToggleAnnotation;
+    }
+
+    public SimpleObjectProperty<Consumer<List<NetworkAnnotation>>> onHighlightAnnotationsProperty() {
+        return onHighlightAnnotations;
     }
 
     @Override

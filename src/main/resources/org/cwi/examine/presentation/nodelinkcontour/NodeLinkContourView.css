@@ -17,9 +17,20 @@
     -fx-cursor:             hand;
 }
 
+.network-node.highlighted {
+    -fx-background-color:   -base-intensity-lowest;
+    -fx-border-color:       -base-intensity-lowest;
+    -fx-text-fill:          -base-intensity-high;
+}
+
 .network-link {
     -fx-stroke-width:   2px;
     -fx-stroke:         -base-intensity-low;
+}
+
+.network-link.selected {
+    -fx-stroke-width:   4px;
+    -fx-stroke:         -base-intensity-lowest;
 }
 
 .network-contour-ribbon {

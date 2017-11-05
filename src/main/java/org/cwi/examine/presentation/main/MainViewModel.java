@@ -20,6 +20,8 @@ import org.cwi.examine.model.NetworkCategory;
 import org.cwi.examine.model.NetworkNode;
 import org.jgrapht.graph.DefaultEdge;
 
+import java.util.List;
+
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.observableHashMap;
 import static javafx.collections.FXCollections.observableSet;
@@ -99,7 +101,7 @@ public final class MainViewModel {
      *
      * @param annotations The annotation to highlight.
      */
-    public void highlightAnnotations(NetworkAnnotation... annotations) {
+    public void highlightAnnotations(List<NetworkAnnotation> annotations) {
 
         clearHighlights();
 

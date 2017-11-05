@@ -2,6 +2,7 @@ package org.cwi.examine.presentation.main.annotation;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.MapProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,15 +18,19 @@ import javafx.scene.paint.Color;
 import org.cwi.examine.model.NetworkAnnotation;
 import org.cwi.examine.model.NetworkCategory;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static javafx.collections.FXCollections.observableHashMap;
 import static javafx.collections.FXCollections.observableList;
 
 class AnnotationTab extends Tab {
 
     private final TableView<NetworkAnnotation> annotationTable;
+    private final AnnotationSelectionModel annotationSelectionModel;
 
     private final MapProperty<NetworkAnnotation, Color> annotationColors = new SimpleMapProperty<>(observableHashMap());
 
@@ -35,7 +40,7 @@ class AnnotationTab extends Tab {
 
     private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotation = new SimpleObjectProperty<>(c -> {
     });
-    private final SimpleObjectProperty<Consumer<NetworkAnnotation>> onHighlightAnnotations = new SimpleObjectProperty<>(c -> {
+    private final SimpleObjectProperty<Consumer<List<NetworkAnnotation>>> onHighlightAnnotations = new SimpleObjectProperty<>(c -> {
     });
 
     AnnotationTab(final NetworkCategory category) {
@@ -58,7 +63,8 @@ class AnnotationTab extends Tab {
         nameColumn.setCellValueFactory(parameters -> new SimpleStringProperty(parameters.getValue().getName()));
         scoreColumn.setCellValueFactory(parameters -> new SimpleObjectProperty<>(parameters.getValue().getScore()));
 
-        // Cell factories.
+        // Row and cell factories.
+        annotationTable.setRowFactory(this::createRow);
         colorColumn.setCellFactory(this::createColorCell);
 
         // Column layout and style.
@@ -68,15 +74,11 @@ class AnnotationTab extends Tab {
 
         annotationTable.getColumns().setAll(colorColumn, nameColumn, scoreColumn);
 
-        final AnnotationSelectionModel selectionModel = new AnnotationSelectionModel(annotationTable);
-        annotationTable.setSelectionModel(selectionModel);
-        selectionModel.onToggleAnnotationProperty().bind(onToggleAnnotation);
+        annotationSelectionModel = new AnnotationSelectionModel(annotationTable);
+        annotationTable.setSelectionModel(annotationSelectionModel);
+        annotationSelectionModel.onToggleAnnotationProperty().bind(onToggleAnnotation);
 
         annotationTable.setRowFactory(this::createRow);
-    }
-
-    private TableRow<NetworkAnnotation> createRow(TableView<NetworkAnnotation> view) {
-        return new TableRow<>();
     }
 
     private ObservableValue<Optional<Color>> bindColorValue(
@@ -86,6 +88,15 @@ class AnnotationTab extends Tab {
                 () -> Optional.ofNullable(annotationColors.get(parameters.getValue())),
                 annotationColors
         );
+    }
+
+    private TableRow<NetworkAnnotation> createRow(TableView<NetworkAnnotation> tableView) {
+
+        final TableRow<NetworkAnnotation> tableRow = new TableRow<>();
+        tableRow.setOnMouseEntered(event -> onHighlightAnnotations.get().accept(asList(tableRow.getItem())));
+        tableRow.setOnMouseExited(event -> onHighlightAnnotations.get().accept(emptyList()));
+
+        return tableRow;
     }
 
     private TableCell<NetworkAnnotation, Optional<Color>> createColorCell(TableColumn<NetworkAnnotation, Optional<Color>> column) {
@@ -125,11 +136,15 @@ class AnnotationTab extends Tab {
         return annotationColors;
     }
 
+    SetProperty<NetworkAnnotation> highlightedAnnotationsProperty() {
+        return annotationSelectionModel.highlightedAnnotationsProperty();
+    }
+
     SimpleObjectProperty<Consumer<NetworkAnnotation>> onToggleAnnotationProperty() {
         return onToggleAnnotation;
     }
 
-    SimpleObjectProperty<Consumer<NetworkAnnotation>> onHighlightAnnotationsProperty() {
+    SimpleObjectProperty<Consumer<List<NetworkAnnotation>>> onHighlightAnnotationsProperty() {
         return onHighlightAnnotations;
     }
 

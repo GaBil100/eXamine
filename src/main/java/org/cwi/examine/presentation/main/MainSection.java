@@ -3,6 +3,8 @@ package org.cwi.examine.presentation.main;
 import javafx.scene.layout.Region;
 import org.cwi.examine.model.Network;
 import org.cwi.examine.presentation.Section;
+import org.cwi.examine.presentation.main.annotation.AnnotationTabs;
+import org.cwi.examine.presentation.nodelinkcontour.NodeLinkContourView;
 
 public class MainSection implements Section {
 
@@ -24,14 +26,20 @@ public class MainSection implements Section {
 
     private void bindViewModel() {
 
-        view.getAnnotationOverview().categoriesProperty().bindContent(viewModel.getCategories());
-        view.getAnnotationOverview().annotationColorsProperty().bindContent(viewModel.annotationColorProperty());
-        view.getAnnotationOverview().onToggleAnnotationProperty().set(viewModel::toggleAnnotation);
+        final AnnotationTabs annotationTabs = view.getAnnotationOverview();
+        annotationTabs.categoriesProperty().bindContent(viewModel.getCategories());
+        annotationTabs.annotationColorsProperty().bind(viewModel.annotationColorProperty());
+        annotationTabs.highlightedAnnotationsProperty().bind(viewModel.highlightedAnnotationsProperty());
+        annotationTabs.onToggleAnnotationProperty().set(viewModel::toggleAnnotation);
+        annotationTabs.onHighlightAnnotationsProperty().set(viewModel::highlightAnnotations);
 
-        view.getNodeLinkContourView().networkProperty().bind(viewModel.activeNetworkProperty());
-        view.getNodeLinkContourView().selectedAnnotationsProperty().bind(viewModel.selectedAnnotationsProperty());
-        view.getNodeLinkContourView().annotationWeightsProperty().bind(viewModel.annotationWeightsProperty());
-        view.getNodeLinkContourView().annotationColorsProperty().bind(viewModel.annotationColorProperty());
+        final NodeLinkContourView nodeLinkContourView = view.getNodeLinkContourView();
+        nodeLinkContourView.networkProperty().bind(viewModel.activeNetworkProperty());
+        nodeLinkContourView.selectedAnnotationsProperty().bind(viewModel.selectedAnnotationsProperty());
+        nodeLinkContourView.annotationWeightsProperty().bind(viewModel.annotationWeightsProperty());
+        nodeLinkContourView.annotationColorsProperty().bind(viewModel.annotationColorProperty());
+        nodeLinkContourView.highlightedNodesProperty().bind(viewModel.highlightedNodesProperty());
+        nodeLinkContourView.highlightedLinksProperty().bind(viewModel.highlightedLinksProperty());
     }
 
     /**

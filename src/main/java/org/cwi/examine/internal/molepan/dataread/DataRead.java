@@ -38,7 +38,7 @@ public class DataRead {
 	
 	public  DataRead() {
 	
-	String file = "data/molecule/1787_united_atom.itp";
+	String file = "data/molecule/test.itp";
 	
 	String node_file = "data/atoms.nodes";
 	String atom_header = "Identifier	Score	Symbol	URL";

@@ -13,6 +13,13 @@ import org.cwi.examine.internal.data.Network;
 import org.cwi.examine.internal.graphics.PVector;
 import org.cwi.examine.internal.layout.dwyer.cola.Descent;
 import org.cwi.examine.internal.layout.dwyer.vpsc.Constraint;
+
+
+import org.cwi.examine.internal.molepan.dataread.DataRead;
+
+import org.cwi.examine.internal.layout.mp.MolecularPartitioner;
+
+
 import org.cwi.examine.internal.visualization.Parameters;
 import org.cwi.examine.internal.data.HNode;
 import org.cwi.examine.internal.data.HAnnotation;
@@ -58,10 +65,13 @@ public class Layout {
     private double[] radii;
     private double[][] mD;
     private double[][] P;
+    
+      private double[][] Temp;
+    
     private double[][] D;
     private double[][] G;
     private Descent descent;
-    
+   
     // Derived metrics.
     public PVector dimensions;
     
@@ -86,7 +96,14 @@ public class Layout {
             }
         }
         
+        
+      
         this.dimensions = PVector.v();
+        
+     
+        //MolecularPartitioner mp = new MolecularPartitioner(network);
+      
+        
         
         updatePositions(oldLayout);
     }
@@ -139,7 +156,9 @@ public class Layout {
             for(int i = 0; i < nodes.length; i++) {
                 PVector pos = oldLayout == null ? PVector.v() : oldLayout.position(richNodes[i]);
                 P[0][i] = pos.x;
-                P[1][i] = pos.y;
+                P[1][i] =  pos.y;
+                
+
             }
             
             // Gradient descent.
@@ -174,21 +193,101 @@ public class Layout {
         double minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
         double maxY = Double.MIN_VALUE;
+    /*    
         for(int i = 0; i < vN; i++) {
             minX = Math.min(minX, P[0][i]);
             minY = Math.min(minY, P[1][i]);
             maxX = Math.max(maxX, P[0][i]);
             maxY = Math.max(maxY, P[1][i]);
         }
-        this.dimensions = PVector.v(maxX - minX, maxY - minY);
+        this.dimensions = PVector.v(maxX - minX, maxY - minY); */
         
-        for(int i = 0; i < vN; i++) {
-            P[0][i] -= minX;
-            P[1][i] -= minY;
-        }
+          
+        
+        	  for(int i = 0; i < vN; i++) {
+    
+            P[1][i] = DataRead.coordinates[1][(DataRead.PosAtom [i % DataRead.atomNo]-1) ]*40; 
+            
+            
+      		P[0][i] =  DataRead.coordinates[0][(DataRead.PosAtom [i % DataRead.atomNo]-1) ]*40; 
+ 					//System.out.println("test " + DataRead.PosAtom [i-1 % (DataRead.atomNo)]);
+       			 }
+       
+         //System.out.println(vN);
+      
+
+    double fac = 40;
+
+/*
+P[0][9] =-2.83*fac; P[1][9] = 0.95*fac;  //1
+P[0][10] =-2.83*fac; P[1][10] = -0.55*fac; //2
+P[0][11] =-1.53*fac; P[1][11] = -1.29*fac; //3
+P[0][12] =-0.24*fac; P[1][12] = -0.55*fac; //4
+
+
+P[0][13] =-0.24*fac; P[1][13] = 0.95*fac; //5
+P[0][14] =1.06*fac; P[1][14] = 1.71*fac;
+
+
+
+P[0][15] =2.36*fac; P[1][15] = 0.95*fac;
+
+P[0][16] =2.36*fac; P[1][16] = -0.55*fac;
+P[0][17] =1.06*fac; P[1][17] = -1.29*fac;
+
+
+P[0][18] =2.36*fac; P[1][18] = -2.04*fac;
+
+
+P[0][0] =3.110208131003807*fac; P[1][0] = 2.048917918952455*fac;
+
+
+P[0][1] =3.110208131003807*fac; P[1][1] = -3.3389179189524545*fac;
+
+P[0][2] =4.610208111749353*fac; P[1][2] = -3.338677578853741*fac;
+
+P[0][3] =5.360416242753159*fac; P[1][3] = -4.637595497806196*fac;
+
+P[0][4] =6.860416223498705*fac; P[1][4] = -4.637355157707486*fac;
+
+P[0][5] =7.610624354502509*fac; P[1][5] = -5.936273076659942*fac;
+
+
+P[0][6] =4.610624393011419*fac; P[1][6] = -5.936273076659942*fac;
+
+P[0][7] =4.610624393011419*fac; P[1][7] = -7.437586839572579*fac;
+P[0][8] =3.3112256603763273*fac; P[1][8] = -6.68779498983084*fac;
+        
+
+
+
+
+1 (-2.83, 0.95)
+2 (-2.83, -0.55)
+3 (-1.53, -1.29)
+4 (-0.24, -0.55)
+5 (-0.24, 0.95)
+6 (1.06, 1.71)
+7 (2.36, 0.95)
+8 (2.36, -0.55)
+9 (1.06, -1.29)
+10 (2.36, -2.04
+
+11 (3.110208131003807, -3.3389179189524545)
+12 (4.610208111749353, -3.338677578853741)
+13 (5.360416242753159, -4.637595497806196)
+14 (6.860416223498705, -4.637355157707486)
+15 (7.610624354502509, -5.936273076659942)
+16 (4.610624393011419, -5.936753756857364)
+17 (4.610383919427495, -7.437586839572579)
+18 (3.3112256603763273, -6.68779498983084)        
+        
+) */
+        
+      
         
         return converged;
-    }
+    } 
     
     // Position of the given node, (0,0) iff null.
     public PVector position(HNode node) {

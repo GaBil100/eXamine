@@ -17,7 +17,7 @@ import org.cwi.examine.internal.layout.dwyer.vpsc.Constraint;
 
 import org.cwi.examine.internal.molepan.dataread.DataRead;
 
-import org.cwi.examine.internal.layout.mp.MolecularPartitioner;
+//import org.cwi.examine.internal.layout.mp.MolecularPartitioner;
 
 
 import org.cwi.examine.internal.visualization.Parameters;

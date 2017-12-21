@@ -8,18 +8,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.cwi.examine.internal.data.Network;
 import org.cwi.examine.internal.graphics.PVector;
 import org.cwi.examine.internal.layout.dwyer.cola.Descent;
 import org.cwi.examine.internal.layout.dwyer.vpsc.Constraint;
-
-
 import org.cwi.examine.internal.molepan.dataread.DataRead;
-
 //import org.cwi.examine.internal.layout.mp.MolecularPartitioner;
-
-
 import org.cwi.examine.internal.visualization.Parameters;
 import org.cwi.examine.internal.data.HNode;
 import org.cwi.examine.internal.data.HAnnotation;
@@ -482,7 +476,7 @@ public class Layout {
 
             // Pair wise constraints, only when within distance bounds.
             // Limit to plain nodes, for now.
-            for (int i = 0; i < nodes.length; i++) {
+            for (int i = 0; i < nodes.length; i++) {  //TODO: multiple bonds
                 PVector iP = PVector.v(x0[i], y0[i]);
 
                 for (int j = 0; j < nodes.length; j++) {

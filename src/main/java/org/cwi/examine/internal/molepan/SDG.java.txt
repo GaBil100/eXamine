@@ -1,1 +1,23 @@
 
+public class SDG {
+
+    public  static String sdg(String readAtom){
+      try{ 
+			StructureDiagramGenerator SDG = new StructureDiagramGenerator();
+ 			SDG.setMolecule(mol);
+ 			SDG.generateCoordinates();
+ 			IAtomContainer layedOutMol = SDG.getMolecule();	
+ 			atomNo = layedOutMol.getAtomCount();
+ 			//System.out.println(SDG.getMolecule());
+ 			coordinates = new double[2][layedOutMol.getAtomCount()];
+ 			  for( i = 0;i<layedOutMol.getAtomCount();i++){
+ 				  coordinates[0][i] = layedOutMol.getAtom(i).getPoint2d().x;
+ 				  coordinates[1][i] = layedOutMol.getAtom(i).getPoint2d().y;	
+ 					//Map<String, int> X = new HashMap<>();
+ 					//Map<String, int> Y = new HashMap<>();	
+ 			  }	
+ 		  } 
+		  catch(CDKException ex){System.err.println("Error: " + ex);
+		  }
+  }
+}

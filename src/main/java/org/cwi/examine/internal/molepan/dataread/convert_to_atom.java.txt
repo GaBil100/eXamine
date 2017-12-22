@@ -10,8 +10,6 @@ public class ConvertToAtom {
 		String sulfur = "S";
 		String phosphorus = "P";
 		String fluorine = "F";
-		
-		
 	 	String Atom = "";
 	 	if( readAtom.contains(carbon) ) Atom = "C";
      		else if(readAtom.contains(hydrogen)) Atom = "H";

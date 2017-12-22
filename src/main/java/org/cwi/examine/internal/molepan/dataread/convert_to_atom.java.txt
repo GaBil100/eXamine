@@ -9,6 +9,9 @@ public class ConvertToAtom {
 		String bromine = "Br";
 		String sulfur = "S";
 		String phosphorus = "P";
+		String fluorine = "F";
+		
+		
 	 	String Atom = "";
 	 	if( readAtom.contains(carbon) ) Atom = "C";
      		else if(readAtom.contains(hydrogen)) Atom = "H";
@@ -17,6 +20,8 @@ public class ConvertToAtom {
 		else if(readAtom.contains(chlorine)) Atom = "CL";
 		else if(readAtom.contains(bromine)) Atom = "Br";
 		else if(readAtom.contains(sulfur)) Atom = "S";
+		else if(readAtom.contains(phosphorus)) Atom = "P";
+		else if(readAtom.contains(fluorine)) Atom = "F";
     	return Atom;
 	}	
 }

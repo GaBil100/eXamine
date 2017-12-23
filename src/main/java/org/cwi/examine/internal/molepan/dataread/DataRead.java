@@ -31,42 +31,40 @@ public class DataRead {
 	
 	public  DataRead() {
 	
-	String file = "data/molecule/test.itp";
-	String node_file = "data/atoms.nodes";
-	String atom_header = "Identifier	Score	Symbol	URL";
-	String annotations_header = "Identifier	Category	Score	Symbol	URL";
-	String url = "about:blank";
-	String comment = ";";
-	String atom_signal = "[ atoms ]";
-	String bonds = "[ bonds ]";
-	String pairs = "[ pairs ]";
-	String[] parts;
+		String file = "data/molecule/test.itp";
+		String node_file = "data/atoms.nodes";
+		String atom_header = "Identifier	Score	Symbol	URL";
+		String annotations_header = "Identifier	Category	Score	Symbol	URL";
+		String url = "about:blank";
+		String comment = ";";
+		String atom_signal = "[ atoms ]";
+		String bonds = "[ bonds ]";
+		String pairs = "[ pairs ]";
+		String[] parts;
 	
-	boolean isAtom = false; 
-	boolean isBond = false; 
+		boolean isAtom = false; 
+		boolean isBond = false; 
 	
-	
-	
-    	Map<String, String> ReCon = new HashMap<>();
-	List<String> type = new ArrayList<String>();
-	List<String> resid = new ArrayList<String>();
-	List<String> cgnr = new ArrayList<String>();
-	List<String> charge = new ArrayList<String>();
-	List<String> total_charge = new ArrayList<String>();
+    		Map<String, String> ReCon = new HashMap<>();
+		List<String> type = new ArrayList<String>();
+		List<String> resid = new ArrayList<String>();
+		List<String> cgnr = new ArrayList<String>();
+		List<String> charge = new ArrayList<String>();
+		List<String> total_charge = new ArrayList<String>();
  			  
-   	ConvertToAtom cta = new ConvertToAtom();
+   		ConvertToAtom cta = new ConvertToAtom();
  		
  		try (Writer annotations = new BufferedWriter(new OutputStreamWriter(
-           	new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	  		
-       	try (Writer partitions = new BufferedWriter(new OutputStreamWriter(
-        	new FileOutputStream("data/partitions.links"), "utf-8"))) {  
-        try (Writer writer3 = new BufferedWriter(new OutputStreamWriter(
-             new FileOutputStream("data/modules.links"), "utf-8"))) {
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-             new FileOutputStream("data/atoms.nodes"), "utf-8"))) {
-        try (Writer writer2 = new BufferedWriter(new OutputStreamWriter(
-             new FileOutputStream("data/bonds.links"), "utf-8"))) {
-            annotations.write(annotations_header); 
+           		new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	  		
+       		try (Writer partitions = new BufferedWriter(new OutputStreamWriter(
+        		new FileOutputStream("data/partitions.links"), "utf-8"))) {  
+        	try (Writer writer3 = new BufferedWriter(new OutputStreamWriter(
+             		new FileOutputStream("data/modules.links"), "utf-8"))) {
+        	try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+             		new FileOutputStream("data/atoms.nodes"), "utf-8"))) {
+       		try (Writer writer2 = new BufferedWriter(new OutputStreamWriter(
+             		new FileOutputStream("data/bonds.links"), "utf-8"))) {
+            		annotations.write(annotations_header); 
    			writer.write(atom_header + "\n");
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
     		 String line;
@@ -147,22 +145,21 @@ public class DataRead {
 		} 
  			
  				
-     	int i = 0;
-     	PosAtom = new int[113];  // TODO! 
-     	String a;
-     	Set set = ReCon.entrySet();
-     	Iterator iterator = set.iterator();
-     	while(iterator.hasNext()) {
-       		Map.Entry mentry = (Map.Entry)iterator.next();
+     		int i = 0;
+     		PosAtom = new int[113];  // TODO! 
+     		String a;
+     		Set set = ReCon.entrySet();
+     		Iterator iterator = set.iterator();
+     		while(iterator.hasNext()) {
+       			Map.Entry mentry = (Map.Entry)iterator.next();
          		a = (String)mentry.getKey();
          		PosAtom [i]=Integer.parseInt(a);
-				System.out.println(PosAtom [i]);  i++;
-     	}
-    	
-    	//SDG sdg = new SDG();
-    	//sdg.sdg();	
-		
-  	  	try{ 
+			System.out.println(PosAtom [i]);  
+			i++;
+     		}
+    		//SDG sdg = new SDG();
+    		//sdg.sdg();	
+  		try{ 
 			StructureDiagramGenerator SDG = new StructureDiagramGenerator();
  			SDG.setMolecule(mol);
  			SDG.generateCoordinates();
@@ -173,13 +170,9 @@ public class DataRead {
  			for( i = 0;i<layedOutMol.getAtomCount();i++){
  				coordinates[0][i] = layedOutMol.getAtom(i).getPoint2d().x;
  				coordinates[1][i] = layedOutMol.getAtom(i).getPoint2d().y;	
- 					//Map<String, int> X = new HashMap<>();
- 					//Map<String, int> Y = new HashMap<>();	
  			}	
  		} 
 		catch(CDKException ex){System.err.println("Error: " + ex);
-		}	
-		
-		
+		}		
 	}    	
 }

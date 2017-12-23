@@ -1,4 +1,7 @@
+package org.cwi.examine.internal.molepan;
+
 public class ConvertToAtom {
+
 
 	public  static String convert_to_atom(String readAtom){
 	 	String carbon = "C";

@@ -9,7 +9,7 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.Atom.*;
 
-
+import org.cwi.examine.internal.molepan.*;
 import org.openscience.cdk.ChemObject.*;
 import org.openscience.cdk.Element.*;
 import org.openscience.cdk.Isotope.*;
@@ -59,6 +59,7 @@ public class DataRead {
 	List<String> charge = new ArrayList<String>();
 	List<String> total_charge = new ArrayList<String>();
  			  
+   	ConvertToAtom cta = new ConvertToAtom();
  		
  	try (Writer annotations = new BufferedWriter(new OutputStreamWriter(
            	new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	
@@ -93,10 +94,10 @@ public class DataRead {
 					isBond = true;
      				}
      				if( !parts[0].contains(comment) && isAtom == true){
-     					mol.addAtom(new Atom(convert_to_atom(parts[5])) );
+     					mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) );
      					//System.out.println(parts[0]+parts[0]+" "+parts[1] +" "
      					//+parts[5]+ "   " + convert_to_atom(parts[5]));
-     					writer.write(parts[1] +"	"+ "0" +"	"+ convert_to_atom(parts[5]) + "	" +url + "\n");
+     					writer.write(parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url + "\n");
      					//writer.write(parts[1] +"	"+ "0" +"	"+ parts[5] + "	" +url + "\n");
      					ReCon.put(parts[1], parts[5]);
      					writer3.write("small	" + parts[1] + "\n");
@@ -146,10 +147,12 @@ public class DataRead {
        		System.err.println("Error: " + e);
      		}
      		}//end writer
+     		
+     		
 		catch (IOException e) {
        		System.err.println("Error: " + e);
 		}//catch writer
-		}//end writer
+		}//end writer    
 		catch (IOException e) {
        		System.err.println("Error: " + e);
 		}//catch writer			
@@ -164,9 +167,11 @@ public class DataRead {
        		System.err.println("Error: " + e);
 		}//catch writer 
 		}//end writer
+		
+		
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer 
+		}//catch writer  
  			
  				
      		int i = 0;
@@ -215,7 +220,7 @@ public class DataRead {
 		catch(CDKException ex){System.err.println("Error: " + ex);
 		}	
 	}
-	
+	/*
 	public  static String convert_to_atom(String readAtom){
 	 	String carbon = "C";
 	 	String oxigen = "O";
@@ -227,6 +232,6 @@ public class DataRead {
      		else if(readAtom.contains(oxigen)) Atom = "O";
      		else if(readAtom.contains(nitrogen)) Atom = "N";		 
     	return Atom;
-	}
+	}*/
      	
 }

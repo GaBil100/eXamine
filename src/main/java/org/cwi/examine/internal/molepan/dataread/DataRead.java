@@ -8,26 +8,18 @@ import org.openscience.cdk.exception.*;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.Atom.*;
-
 import org.cwi.examine.internal.molepan.*;
 import org.openscience.cdk.ChemObject.*;
 import org.openscience.cdk.Element.*;
 import org.openscience.cdk.Isotope.*;
 import org.openscience.cdk.AtomType.*;
-
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
-
 import java.lang.Object;
-
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.FileSystems;
-
-
-
-
 
 public class DataRead {
 
@@ -35,11 +27,11 @@ public class DataRead {
 	public static double[][] coordinates;
 	public static int[] PosAtom;
 	public static int atomNo;
+	public static AtomContainer mol = new AtomContainer();
 	
 	public  DataRead() {
 	
 	String file = "data/molecule/test.itp";
-	
 	String node_file = "data/atoms.nodes";
 	String atom_header = "Identifier	Score	Symbol	URL";
 	String annotations_header = "Identifier	Category	Score	Symbol	URL";
@@ -49,10 +41,13 @@ public class DataRead {
 	String bonds = "[ bonds ]";
 	String pairs = "[ pairs ]";
 	String[] parts;
+	
 	boolean isAtom = false; 
 	boolean isBond = false; 
-	AtomContainer mol = new AtomContainer();
-        Map<String, String> ReCon = new HashMap<>();
+	
+	
+	
+    	Map<String, String> ReCon = new HashMap<>();
 	List<String> type = new ArrayList<String>();
 	List<String> resid = new ArrayList<String>();
 	List<String> cgnr = new ArrayList<String>();
@@ -61,9 +56,8 @@ public class DataRead {
  			  
    	ConvertToAtom cta = new ConvertToAtom();
  		
- 	try (Writer annotations = new BufferedWriter(new OutputStreamWriter(
-           	new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	
-             		annotations.write(annotations_header);
+ 		try (Writer annotations = new BufferedWriter(new OutputStreamWriter(
+           	new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	  		
        	try (Writer partitions = new BufferedWriter(new OutputStreamWriter(
         	new FileOutputStream("data/partitions.links"), "utf-8"))) {  
         try (Writer writer3 = new BufferedWriter(new OutputStreamWriter(
@@ -72,8 +66,9 @@ public class DataRead {
              new FileOutputStream("data/atoms.nodes"), "utf-8"))) {
         try (Writer writer2 = new BufferedWriter(new OutputStreamWriter(
              new FileOutputStream("data/bonds.links"), "utf-8"))) {
+            annotations.write(annotations_header); 
    			writer.write(atom_header + "\n");
-	try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
     		 String line;
     		 int i = 0;
     		 int j = 0;
@@ -85,35 +80,26 @@ public class DataRead {
      					isBond = false;
      				}
      				if( !parts[0].contains(comment) && isBond == true){
-     					//System.out.println(+ " " +parts[2]);
      					mol.addBond( new Bond( mol.getAtom(Integer.parseInt(parts[1])-1), mol.getAtom(Integer.parseInt(parts[2])-1) ));
      					writer2.write(parts[1]+ "	"+ parts[2]+ "\n");
      				}
      				if( line.contains(bonds)){ 
      					isAtom = false;
-					isBond = true;
+						isBond = true;
      				}
      				if( !parts[0].contains(comment) && isAtom == true){
      					mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) );
-     					//System.out.println(parts[0]+parts[0]+" "+parts[1] +" "
-     					//+parts[5]+ "   " + convert_to_atom(parts[5]));
      					writer.write(parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url + "\n");
-     					//writer.write(parts[1] +"	"+ "0" +"	"+ parts[5] + "	" +url + "\n");
      					ReCon.put(parts[1], parts[5]);
      					writer3.write("small	" + parts[1] + "\n");
-     					//Partitions (Links)
-     				        /*partitions.write(parts[1] + "	" + parts[2]+ "	" + parts[4]);
-     					partitions.write("\n"); */	
      					partitions.write(parts[1] + "	" + parts[2] + "	" + parts[4] + "	" 
      					+ "#" + parts[6]+ "	"  + parts[7]);		
      				if( line.contains(comment) )partitions.write("	"  + "tc(" +parts[10] + ")");
      					partitions.write("\n"); 	
-     					//Partitions (Annotations)
      				if( !type.contains(parts[2]) ){
      					type.add(parts[2]);
      					annotations.write("\n" + parts[2] +	"	Type	0	" + parts[2] + "	about:blank" );
      				}
-		
      				if( !resid.contains(parts[4]) ){
      					resid.add(parts[4]);
      					annotations.write("\n" +  parts[4] +	"	resid	0	" + parts[4] + "	about:blank" );
@@ -132,76 +118,50 @@ public class DataRead {
      						annotations.write("\n" +   "tc(" +parts[10] + ")" +	"	total_charge	0	" + "tc(" +parts[10] + ")" + "	about:blank" );
      					}
      				}
-     				}
-     				//PrintWriter writer_atom_nodes = new PrintWriter("data/atoms.nodes", "UTF-8");
-     				//writer_atom_nodes.println(parts[5]);
-				//writer_atom_nodes.close();		
+     				}	
      				if(	line.contains(atom_signal)) isAtom = true;	     					
-     				} //END if_1  			 		
-     				/*	if( once ==true ){once = false;} mol.addAtom(new Atom(convert_to_atom
-     						(parts[5])) ); System.out.print(parts[1] +" ");System.out.println
-     						(convert_to_atom(parts[5]) +" ");}if (line.contains(atom_signal))
-     						ignore = false;*/	
-    		  	} //END While 
+     				} 			 			
+    		  	}
 		}catch (IOException e) {
        		System.err.println("Error: " + e);
      		}
-     		}//end writer
-     		
-     		
+     		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer
-		}//end writer    
+		}
+		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer			
-		}//end writer
+		}		
+		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer 
-		//Map<String, int> X = new HashMap<>();
- 		//Map<String, int> Y = new HashMap<>();
- 		}//end writer
+		}
+ 		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer 
-		}//end writer
-		
-		
+		} 
+		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}//catch writer  
+		} 
  			
  				
-     		int i = 0;
-     		PosAtom = new int[113];  // TODO! 
-     		String a;
-     		/*try (Writer fwriter = new BufferedWriter(new OutputStreamWriter(
-           	 new FileOutputStream("data/temp"), "utf-8"))) {*/
-     		 Set set = ReCon.entrySet();
-     		 Iterator iterator = set.iterator();
-     		 while(iterator.hasNext()) {
-       			Map.Entry mentry = (Map.Entry)iterator.next();/*
-         		System.out.print("key is: "+ mentry.hashCode() + " & Value is: ");
-         		System.out.println(mentry.getValue() ); */
+     	int i = 0;
+     	PosAtom = new int[113];  // TODO! 
+     	String a;
+     	Set set = ReCon.entrySet();
+     	Iterator iterator = set.iterator();
+     	while(iterator.hasNext()) {
+       		Map.Entry mentry = (Map.Entry)iterator.next();
          		a = (String)mentry.getKey();
-         		//fwriter.write((String)mentry.getKey()+ "\n");
-         		PosAtom [i]=Integer.parseInt(a); //(Integer)a;  //System.out.println(Integer) ;
+         		PosAtom [i]=Integer.parseInt(a);
 				System.out.println(PosAtom [i]);  i++;
-     		 }
-    		
-     		 /*}//end writer
-		catch (IOException e) {
-       		System.err.println("Error: " + e);
-		}//catch writer*/	
-     		/*
-     		for ( String ra: ReCon.keySet() ){
-     		System.out.print(ReCon.getValue() + " ");
-       		 System.out.println(ReCon.get(ra));
-       		 }
-       		 */
-     		
+     	}
+    	
+    	//SDG sdg = new SDG();
+    	//sdg.sdg();	
+		
   	  	try{ 
 			StructureDiagramGenerator SDG = new StructureDiagramGenerator();
  			SDG.setMolecule(mol);
@@ -219,19 +179,7 @@ public class DataRead {
  		} 
 		catch(CDKException ex){System.err.println("Error: " + ex);
 		}	
-	}
-	/*
-	public  static String convert_to_atom(String readAtom){
-	 	String carbon = "C";
-	 	String oxigen = "O";
-	 	String hydrogen = "H";
-		 String nitrogen = "N";
-	 	String Atom = "";
-	 	if( readAtom.contains(carbon) ) Atom = "C";
-     		else if(readAtom.contains(hydrogen)) Atom = "H";
-     		else if(readAtom.contains(oxigen)) Atom = "O";
-     		else if(readAtom.contains(nitrogen)) Atom = "N";		 
-    	return Atom;
-	}*/
-     	
+		
+		
+	}    	
 }

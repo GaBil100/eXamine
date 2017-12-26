@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
-	<!-- TODO Add Nodes -->
-</AnchorPane>
 
+<AnchorPane prefHeight="325.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="controller.MainController">
+   <children>
+      <TextField fx:id="field" layoutX="32.0" layoutY="41.0" text="eXamol: settings" />
+      <Button fx:id="button" layoutX="200.0" layoutY="41.0" mnemonicParsing="false" text="Button" />
+   </children>
+</AnchorPane>

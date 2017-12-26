@@ -1,4 +1,4 @@
-package controller;
+package org.cwi.examine.internal.ui.controller;
 	
 import java.io.IOException;
 
@@ -18,23 +18,23 @@ public class Main extends Application {
 	
 	public void mainWindow() {
 		
-	try {
+		try {
 		
-		FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/view.fxml"));
+			FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/view.fxml"));
 		
-		AnchorPane pane = loader.loard();
+			AnchorPane pane = loader.loard();
 		
-		primaryStage.setMinWidth(400.00);
+			primaryStage.setMinWidth(400.00);
 		
-		primaryStage.setMinHeight(325.00);
+			primaryStage.setMinHeight(325.00);
 		
-		Scene scene = new Scene(pane);
+			Scene scene = new Scene(pane);
 		
-		MainController maincontroller = loader.getController(); 
+			MainController maincontroller = loader.getController(); 
 		
-		primaryStage.setScene(scene);
+			primaryStage.setScene(scene);
 		
-		primaryStage.show();
+			primaryStage.show();
 		
 		
 		}

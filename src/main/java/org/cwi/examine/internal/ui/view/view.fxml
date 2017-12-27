@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane prefHeight="325.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="controller.MainController">
+<AnchorPane fx:id="label" prefHeight="325.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
-      <TextField fx:id="field" layoutX="32.0" layoutY="41.0" text="eXamol: settings" />
-      <Button fx:id="button" layoutX="200.0" layoutY="41.0" mnemonicParsing="false" text="Button" />
+      <Label fx:id="eXamol_label" layoutX="43.0" layoutY="41.0" text="eXamol: Settings">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <TitledPane layoutX="22.0" layoutY="75.0" prefHeight="206.0" prefWidth="133.0" text="Settings">
+         <content>
+            <Button fx:id="button" mnemonicParsing="false" onAction="#handleButton" text="Show Hydrogen" />
+         </content>
+      </TitledPane>
+      <TitledPane animated="false" layoutX="176.0" layoutY="75.0" prefHeight="206.0" prefWidth="127.0" text="Files">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="69.0" />
+        </content>
+      </TitledPane>
+      <CheckBox layoutX="203.0" layoutY="46.0" mnemonicParsing="false" text="CheckBox" />
    </children>
 </AnchorPane>

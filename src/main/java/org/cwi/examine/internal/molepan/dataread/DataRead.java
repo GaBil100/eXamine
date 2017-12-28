@@ -73,7 +73,8 @@ public class DataRead {
     		 boolean once = true;	
    			 while ((line = br.readLine()) != null) {
    			 	if( line!=null ){
-     					parts = line.split("\\s+");
+   			 		
+     				parts = line.split("\\s+");
      				if( line.contains(pairs)){ 
      					isBond = false;
      				}
@@ -118,8 +119,8 @@ public class DataRead {
      				}
      				}	
      				if(	line.contains(atom_signal)) isAtom = true;	     					
-     				} 			 			
-    		  	}
+     			} 			 			
+    		}
 		}catch (IOException e) {
        		System.err.println("Error: " + e);
      		}

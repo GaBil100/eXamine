@@ -57,49 +57,75 @@ public class DataRead {
  			  
    		ConvertToAtom cta = new ConvertToAtom();
  		
- 		try (Writer annotations = new BufferedWriter(new OutputStreamWriter(
-           		new FileOutputStream("data/partitions.annotations"), "utf-8"))) {	  		
-       		try (Writer partitions = new BufferedWriter(new OutputStreamWriter(
+ 		try (Writer annotations_w = new BufferedWriter(new OutputStreamWriter(
+           		new FileOutputStream("data/partitions.annotations"), "utf-8"))) {
+           			  		
+       		try (Writer partitions_w = new BufferedWriter(new OutputStreamWriter(
         		new FileOutputStream("data/partitions.links"), "utf-8"))) {  
-        	try (Writer writer3 = new BufferedWriter(new OutputStreamWriter(
+        		
+        	try (Writer modules_w = new BufferedWriter(new OutputStreamWriter(
              		new FileOutputStream("data/modules.links"), "utf-8"))) {
-        	try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+             		
+        	try (Writer atoms_w = new BufferedWriter(new OutputStreamWriter(
              		new FileOutputStream("data/atoms.nodes"), "utf-8"))) {
-       		try (Writer writer2 = new BufferedWriter(new OutputStreamWriter(
+             		
+       		try (Writer bonds_w = new BufferedWriter(new OutputStreamWriter(
              		new FileOutputStream("data/bonds.links"), "utf-8"))) {
-            		annotations.write(annotations_header); 
-   			writer.write(atom_header + "\n");
+             		
+            		annotations_w.write(annotations_header); 
+            		
+   					atoms_w.write(atom_header + "\n");
+   					
+   					
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		
     		 String line;
     		 int i = 0;
     		 int j = 0;
-    		 int cat = 0:
+    		 int cat = 0;
     		 boolean once = true;	
+    		 boolean isRead = false;
+    		 
    			 while ((line = br.readLine()) != null) {
+   			 
    			 	if( line!=null ){
    			 	
    			 		//switch atom_read:
    			 		if(	line.contains(atom_signal)) isAtom = true;
    			 		
+   			 		if( line.contains(bonds)){ 
+     					isAtom = false;
+						isBond = true;
+     				}
+   			 		
+   			 		parts = line.split("\\s+");	
    			 		// collect categorie items
-   			 		if(	part[0].contains(comment)&&isAtom==true){
-   			 			cat = parts.lenght-1;
-   			 			for(int a = 1;a<cat;a++){	
+   			 		if(	parts[0].contains(comment)&&isAtom==true && isRead ==false){
+   			 			cat = parts.length-1;
+   			 			for(int a = 2;a<cat+1;a++){	
    			 				categories.add(parts[a]);
+   						
    			 			}
    			 			
-   			 		if( !parts[0].contains(comment) && isAtom == true){
-   			 			mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) );
-   			 			writer.write(parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url + "\n");
-     					ReCon.put(parts[1], parts[5]);
-     					writer3.write("small	" + parts[1] + "\n");
-     					
-     					
-   			 	
-   			 			
-   			 			
+   			 		isRead = true;	
    			 		
+   			 		
+   			 		
+   			 		System.out.println(categories);
+   			 			
+   			 		if(!parts[0].contains(comment) && isAtom == true){
+   			 			//mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) );
+   			 			atoms_w.write(parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url + "\n");
+     					ReCon.put(parts[1], parts[5]);
+     					modules_w.write("small	" + parts[1] + "\n");
+     					System.out.println("test");
+     
    			 		} //end first 'if'
+   			 		
+   			 		
+   			 		
+   			 		
+   			 		
    			 		
    			 		/*
      				parts = line.split("\\s+");
@@ -149,7 +175,9 @@ public class DataRead {
      				if(	line.contains(atom_signal)) isAtom = true;  */	     					
      			} 			 			
     		}
-		}catch (IOException e) {
+		}}
+		
+		catch (IOException e) {
        		System.err.println("Error: " + e);
      		}
      		}
@@ -201,7 +229,8 @@ public class DataRead {
  				coordinates[1][i] = layedOutMol.getAtom(i).getPoint2d().y;	
  			}	
  		} 
-		catch(CDKException ex){System.err.println("Error: " + ex);
+		catch(CDKException ex){
+			System.err.println("Error: " + ex);
 		}		
 	}    	
 }

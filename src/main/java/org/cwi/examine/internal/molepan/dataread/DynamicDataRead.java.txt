@@ -77,7 +77,7 @@ public class DataRead {
    					atoms_w.write(atom_header + "\n");
    					
    					
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+   			try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 		
     		 String line;
     		 int i = 0;
@@ -89,7 +89,9 @@ public class DataRead {
    			 while ((line = br.readLine()) != null) {
    			 
    			 	if( line!=null ){
-   			 	
+   			 		
+   			 		
+   			 		parts = line.split("\\s+");	
    			 		//switch atom_read:
    			 		if(	line.contains(atom_signal)) isAtom = true;
    			 		
@@ -98,7 +100,7 @@ public class DataRead {
 						isBond = true;
      				}
    			 		
-   			 		parts = line.split("\\s+");	
+   			 		
    			 		// collect categorie items
    			 		if(	parts[0].contains(comment)&&isAtom==true && isRead ==false){
    			 			cat = parts.length-1;
@@ -182,22 +184,27 @@ public class DataRead {
 		catch (IOException e) {
        		System.err.println("Error: " + e);
      		}
-     		}
+   			
+     	}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}
-		}
-		catch (IOException e) {
-       		System.err.println("Error: " + e);
-		}		
+			}
+       		
 		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		}
+			}
+        	
+        }
+		catch (IOException e) {
+       		System.err.println("Error: " + e);
+			}
+        	
  		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);
-		} 
+			} 
+       		
 		}
 		catch (IOException e) {
        		System.err.println("Error: " + e);

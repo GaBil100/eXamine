@@ -74,7 +74,7 @@ public class DataRead {
              		
             		annotations_w.write(annotations_header); 
             		
-   					atoms_w.write(atom_header + "\n");
+   					atoms_w.write(atom_header);
    					
    					
    			try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -85,20 +85,24 @@ public class DataRead {
     		 int cat = 0;
     		 boolean once = true;	
     		 boolean isRead = false;
+    		 boolean isReadBond = false;
+    		 boolean isAtomRead = false;
     		 
    			 while ((line = br.readLine()) != null) {
    			 
    			 	if( line!=null ){
    			 		
    			 		
+   			 			
+   			 			
    			 		parts = line.split("\\s+");	
-   			 		//switch atom_read:
-   			 		if(	line.contains(atom_signal)) isAtom = true;
    			 		
-   			 		if( line.contains(bonds)){ 
-     					isAtom = false;
-						isBond = true;
+   			 		
+   			 		
+   			 		if( line.contains(pairs)){ 
+     					isBond = false;
      				}
+   			 	
    			 		
    			 		
    			 		// collect categorie items
@@ -109,21 +113,82 @@ public class DataRead {
    						
    			 			}
    			 			
-   			 		isRead = true;	
+   			 		isRead = true;
+   			 		System.out.println(categories);	
    			 		}
    			 		
+   			 		if( !line.contains(pairs) && isBond == true && !parts[0].contains(comment) && !line.contains(bonds) && isReadBond == true){
+   			 		    bonds_w.write("\n");}
    			 		
-   			 		System.out.println(categories);
-   			 			
+   			 		
+   			 		
+   			 		if( !parts[0].contains(comment) && isBond == true){
+     					mol.addBond( new Bond( mol.getAtom(Integer.parseInt(parts[1])-1), mol.getAtom(Integer.parseInt(parts[2])-1) ));
+     					bonds_w.write(parts[1]+ "	"+ parts[2] );
+     					isReadBond = true;
+     					}
+     					
+   			 
+   
+   			 		if( line.contains(bonds)){ 
+     					isAtom = false;
+						isBond = true;
+     				}
+     				
+     				if( !line.contains(bonds) && isAtom == true && isAtomRead == true && !parts[0].contains(comment)){
+   			 		    modules_w.write("\n");}
+     				
+     				// Read Atom and Atom_C
    			 		if(!parts[0].contains(comment) && isAtom == true){
-   			 			//mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) );
-   			 			atoms_w.write(parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url + "\n");
+   			 		
+   			 			mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) ); 
+   			 			
+   			 			atoms_w.write("\n" +parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url );
+   			 			
+   			 			isAtomRead = true;
+   			 			
+   			 			int k = 0;
+   			 			partitions_w.write("\n");	
+   			 			for( int a = 2;a<parts.length;a++){	
+   			 				//if( collision.contains(categories[a] + "-" + parts[a]) )
+   			 				if(!parts[a].contains(comment)){
+   			 					if(!collision.contains( categories.get(k) + "_" + "(" + parts[a] + ")" ) ){
+   			 					
+   			 					    collision.add(categories.get(k) + "_" + "(" + parts[a] + ")" );
+     								annotations_w.write("\n" + categories.get(k) + "_" + "(" + parts[a] + ")"  +	"	" + categories.get(k) 
+     												+ "	0	" + categories.get(k) + "_" + "(" + parts[a] + ")"  + "	about:blank" );	
+   			 					}
+   			 					if(a == 2)
+   			 					partitions_w.write(parts[a-1] );
+   			 					
+   			 					if(a!=2 && !parts[a].contains(comment)){
+   			 					partitions_w.write("	"  + categories.get(k) + "_(" + parts[a] + ")");	}	
+   			 						// HERE	
+   			 					k++;
+   			 					//categories.add(parts[a]);
+   			 					}
+   			 					
+   			 			}
+   			 			ReCon.put(parts[1], parts[5]);
+   			 			modules_w.write("small	" + parts[1]);
+   			 			
+   			 			 
+   			 			 /*
+   			 			 for(Object element : categories)
+								{
+							System.out.println(element);
+							} */
+							
+							
+   			 			/*
      					ReCon.put(parts[1], parts[5]);
-     					modules_w.write("small	" + parts[1] + "\n");
-     					System.out.println("test");
+     					modules_w.write("small	" + parts[1] + "\n"); */
+     					
      
    			 		} //end first 'if'
    			 		
+   			 		//switch atom_read:
+   			 		if(	line.contains(atom_signal)) isAtom = true;
    			 		
    			 		
    			 		
@@ -212,7 +277,7 @@ public class DataRead {
  			
  				
      		int i = 0;
-     		PosAtom = new int[113];  // TODO! 
+     		PosAtom = new int[900];  // TODO! 
      		String a;
      		Set set = ReCon.entrySet();
      		Iterator iterator = set.iterator();
@@ -231,8 +296,11 @@ public class DataRead {
  			SDG.generateCoordinates();
  			IAtomContainer layedOutMol = SDG.getMolecule();	
  			atomNo = layedOutMol.getAtomCount();
- 			//System.out.println(SDG.getMolecule());
- 			coordinates = new double[2][layedOutMol.getAtomCount()];
+ 			
+ 			System.out.println("ano: " + atomNo);
+ 			
+ 			
+ 			coordinates = new double[2][atomNo];
  			for( i = 0;i<layedOutMol.getAtomCount();i++){
  				coordinates[0][i] = layedOutMol.getAtom(i).getPoint2d().x;
  				coordinates[1][i] = layedOutMol.getAtom(i).getPoint2d().y;	

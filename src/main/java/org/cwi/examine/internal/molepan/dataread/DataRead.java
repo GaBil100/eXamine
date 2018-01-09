@@ -156,7 +156,7 @@ public class DataRead {
    			 					
    			 					    collision.add(categories.get(k) + "_" + "(" + parts[a] + ")" );
      								annotations_w.write("\n" + categories.get(k) + "_" + "(" + parts[a] + ")"  +	"	" + categories.get(k) 
-     												+ "	0	" + categories.get(k) + "_" + "(" + parts[a] + ")"  + "	about:blank" );	
+     												+ "	0	"  + parts[a]  + "	about:blank" );	
    			 					}
    			 					if(a == 2)
    			 					partitions_w.write(parts[a-1] );

@@ -26,7 +26,7 @@ import static org.cwi.examine.internal.visualization.Parameters.*;
 // Visualization module.
 public class Visualization extends Application {
 
-    public static final String APPLICATION_TITLE = "eXamineS";
+    public static final String APPLICATION_TITLE = "eXamol";
 
     public final Model model;
     private List<SetList> setLists;  // GO Term lists (per domain).

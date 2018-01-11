@@ -48,7 +48,7 @@ public class NodeRepresentation extends Representation<HNode> {
 
     @Override
     public void draw() {
-        color(Color.BLACK);
+        color(Color.WHITE);
         translate(topLeft);
         
         // Get label bounds, but also annotations label font.
@@ -59,7 +59,10 @@ public class NodeRepresentation extends Representation<HNode> {
         if(element.toString().contains("C"))
          translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
         // Background rectangle.
-        color(highlight() ? Parameters.containmentColor : Color.LIGHT_GRAY);
+        if(!element.toString().contains("H"))
+        color(highlight() ? Parameters.containmentColor : Color.WHITE);
+        if(element.toString().contains("H"))
+         color(highlight() ? Parameters.containmentColor : Color.BLACK);
                             //(Color) styleValue(BasicVisualLexicon.NODE_FILL_COLOR));
         fill(shape);
         
@@ -69,7 +72,21 @@ public class NodeRepresentation extends Representation<HNode> {
         StaticGraphics.draw(shape);
         
         picking();
+        
+        //Kalottenmodell
+        
         color(highlight() ? Parameters.textContainedColor : Color.BLACK);
+        
+        if(element.toString().contains("O"))
+        color(highlight() ? Parameters.textContainedColor : Color.RED);
+        
+        if(element.toString().contains("H"))
+        color(highlight() ? Parameters.textContainedColor : Color.WHITE);
+        
+        if(element.toString().contains("N"))
+        color(highlight() ? Parameters.textContainedColor : Color.BLUE);
+        
+        
                             //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
         if(!element.toString().contains("C"))
         
@@ -167,6 +184,7 @@ public class NodeRepresentation extends Representation<HNode> {
             if(element.url != null && element.url.trim().length() > 0) {
                 try {
                     Desktop.getDesktop().browse(URI.create(element.url));
+                    System.out.println("test");
                 } catch(IOException ex) {
                     Logger.getLogger(SetRepresentation.class.getName()).log(Level.SEVERE, null, ex);
                 }

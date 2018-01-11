@@ -54,21 +54,25 @@ public class NodeRepresentation extends Representation<HNode> {
         // Get label bounds, but also annotations label font.
         PVector bounds = Layout.labelDimensions(element, true);
         Shape shape = shape(bounds);
+        if(!element.toString().contains("C"))
         translate(-0.5 * bounds.x, -0.5 * bounds.y);
-        
+        if(element.toString().contains("C"))
+         translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
         // Background rectangle.
         color(highlight() ? Parameters.containmentColor : Color.LIGHT_GRAY);
                             //(Color) styleValue(BasicVisualLexicon.NODE_FILL_COLOR));
         fill(shape);
         
         // Foreground outline with color coding.
-        color(Color.BLACK); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
-        strokeWeight(2);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
+        color(Color.WHITE); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
+        strokeWeight(1);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
         StaticGraphics.draw(shape);
         
         picking();
         color(highlight() ? Parameters.textContainedColor : Color.BLACK);
                             //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
+        if(!element.toString().contains("C"))
+        
         text(element.toString(), 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
     }
     

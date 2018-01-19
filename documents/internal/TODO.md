@@ -1,7 +1,10 @@
-- molecule file with extended, custom categories
-- molecule file creator
-- settings panel
+- molecule file with extended, custom categories - DONE
+- settings panel - DONE
   - show hydrogen
-  - show charge
   - file import
-- visual improvements
+  
+- visual improvements - DONE
+  - Skeletal formula - DONE
+  - CPC-Colouring  - DONE
+  - Double Bonds - DONE
+  - straight line - DONE

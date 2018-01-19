@@ -197,17 +197,17 @@ public class Layout {
         this.dimensions = PVector.v(maxX - minX, maxY - minY); */
         
           
-        
+        //first
         	  for(int i = 0; i < vN; i++) {
     
-            P[1][i] = DataRead.coordinates[1][(DataRead.PosAtom [i % DataRead.atomNo]-1) ]*40; 
+          P[1][i] = DataRead.coordinates[1][(DataRead.PosAtom [i % DataRead.atomNo]-1) ]*40; 
             
             
       		P[0][i] =  DataRead.coordinates[0][(DataRead.PosAtom [i % DataRead.atomNo]-1) ]*40; 
  					//System.out.println("test " + DataRead.PosAtom [i-1 % (DataRead.atomNo)]);
        			 }
        
-         //System.out.println(vN);
+         System.out.println("test: " + vN);
       
 
     double fac = 40;
@@ -404,7 +404,7 @@ public class Layout {
         double height = textHeight();
         
         StaticGraphics.textFont(org.cwi.examine.internal.graphics.draw.Parameters.labelFont);
-        return PVector.v(textWidth(node.toString()) /*+ NODE_OUTLINE*/ + (padding ? height : 0),
+        return PVector.v(textWidth("H") /*+ NODE_OUTLINE*/ + (padding ? height : 0),
                  height + Parameters.NODE_OUTLINE);
     }
     

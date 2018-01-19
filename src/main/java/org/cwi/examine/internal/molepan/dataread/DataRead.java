@@ -27,7 +27,9 @@ public class DataRead {
 	public static double[][] coordinates;
 	public static int[] PosAtom;
 	public static int atomNo;
+	public static int atomPl = 1;
 	public static AtomContainer mol = new AtomContainer();
+	public static String col = ""; 
 	
 	public  DataRead() {
 	
@@ -143,7 +145,7 @@ public class DataRead {
    			 		
    			 			mol.addAtom(new Atom(cta.convert_to_atom(parts[5])) ); 
    			 			
-   			 			atoms_w.write("\n" +parts[1] +"	"+ "0" +"	"+ cta.convert_to_atom(parts[5]) + "	" +url );
+   			 			atoms_w.write("\n" +parts[1] +"	"+ "0" +"	"+ parts[5] + "	" +url ); //cta.convert_to_atom(parts[5])
    			 			
    			 			isAtomRead = true;
    			 			

@@ -11,6 +11,7 @@ import org.cwi.examine.internal.visualization.Visualization;
 import org.cwi.examine.internal.data.HNode;
 import org.cwi.examine.internal.data.HAnnotation;
 import org.cwi.examine.internal.visualization.SetRepresentation;
+import org.cwi.examine.internal.molepan.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,8 @@ public class NodeRepresentation extends Representation<HNode> {
         super(element);
 
         this.visualization = visualization;
+        
+        
     }
 
     @Override
@@ -48,15 +51,17 @@ public class NodeRepresentation extends Representation<HNode> {
 
     @Override
     public void draw() {
+    	ConvertToAtom cta = new ConvertToAtom();
         color(Color.WHITE);
         translate(topLeft);
         
         // Get label bounds, but also annotations label font.
         PVector bounds = Layout.labelDimensions(element, true);
         Shape shape = shape(bounds);
-        if(!element.toString().contains("C"))
+        if(!element.toString().contains("C"))   
         translate(-0.5 * bounds.x, -0.5 * bounds.y);
-        if(element.toString().contains("C"))
+       // color(highlight() ? Parameters.containmentColor : Color.BLACK);
+       if(element.toString().contains("C"))  
          translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
         // Background rectangle.
         if(!element.toString().contains("H"))
@@ -87,10 +92,10 @@ public class NodeRepresentation extends Representation<HNode> {
         color(highlight() ? Parameters.textContainedColor : Color.BLUE);
         
         
-                            //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
+       //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
         if(!element.toString().contains("C"))
-        
-        text(element.toString(), 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
+       // color(highlight() ? Parameters.textContainedColor : Color.RED);
+        text(cta.convert_to_atom(element.toString() + " "), 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
     }
     
     private Shape shape(PVector bounds) {

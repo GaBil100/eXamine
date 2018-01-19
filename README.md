@@ -11,3 +11,8 @@ Compilation instruction
 Apache Maven is required to compile the code via:
 
     mvn install
+    
+Execution 
+-----------------------
+
+    java -jar examines.jar

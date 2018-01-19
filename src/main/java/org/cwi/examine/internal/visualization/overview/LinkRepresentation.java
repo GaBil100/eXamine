@@ -2,34 +2,69 @@ package org.cwi.examine.internal.visualization.overview;
 
 import com.sun.javafx.collections.ObservableSetWrapper;
 import org.cwi.examine.internal.data.HNode;
+
+import org.cwi.examine.internal.data.Network;
+import org.cwi.examine.internal.molepan.dataread.DataRead;
 import org.cwi.examine.internal.graphics.PVector;
 import org.cwi.examine.internal.graphics.StaticGraphics;
 import org.cwi.examine.internal.graphics.draw.Representation;
 import org.cwi.examine.internal.visualization.Parameters;
 import org.cwi.examine.internal.visualization.Visualization;
 import org.cwi.examine.internal.data.HAnnotation;
+import org.cwi.examine.internal.data.Network;
 import org.jgrapht.graph.DefaultEdge;
+
+import org.jgrapht.graph.*;
+import org.jgrapht.Graph.*;
+
+
+import java.io.*;
+import java.util.*;
+import java.lang.Object;
+
+
+import org.jgrapht.*;
+
 
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
+
 
 // Link representation.
 public class LinkRepresentation extends Representation<LinkRepresentation.Link> {
     private final Visualization visualization;
     public final DefaultEdge edge;  // Underlying edge.
     public final PVector[] cs;
+     private Network network;
+    
+    // public  String col = "" ;
+    
+    Map<String, String> collision = new HashMap<>();
+     
+     int baba = 0;
+   
+  
+   //  public final PVector[] ca;
+    // public int est;
     //public final LineString ls;     // Curve coordinates.
 
     public LinkRepresentation(final Visualization visualization,
             DefaultEdge edge,
                               HNode node1,
                               HNode node2,
-                              PVector[] cs) {
+                              PVector[] cs,
+                              Network network) {
+                              
         super(new Link(node1, node2));
         this.visualization = visualization;
         this.edge = edge;
         this.cs = cs;
+        this.network = network;
+        //this.node1 = node1;
+        // List<HNode> collision;
+        
+		
         //this.ls = Util.circlePiece(cs[0], cs[1], cs[2], LINK_SEGMENTS);
     }
 
@@ -58,7 +93,80 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
     }
     
     private void drawLink() {
-        StaticGraphics.circleArc(cs[0], cs[1], cs[2]);
+    
+    
+      //  StaticGraphics.circleArc(cs[0], cs[0], cs[2]); // Here Bond Type!
+      String bondtype;
+      
+      
+       
+       
+      if(  !element.node1.toString().contains("H") 
+      	&& !element.node2.toString().contains("H") 
+      	&& network.graph.degreeOf(element.node1) < 4 
+      	&& network.graph.degreeOf(element.node2) < 4
+      	&& ( !DataRead.col.contains(element.node1.toString())  // ai not in list, or ai and aj in list
+      		 || DataRead.col.contains(" "  + element.node1.toString() 
+      		 							   + element.node2.toString() )
+      		 || DataRead.col.contains(		 element.node1.toString() 
+      		 							   + element.node2.toString() 
+      		 							   + " " ) 
+      		 							    
+      		)  
+      															  
+   /*   	&& ( !DataRead.col.contains(element.node2.toString())  
+      		 || DataRead.col.contains(" "  + element.node1.toString() 
+      		 							   + element.node2.toString() ) 
+      		 || DataRead.col.contains(		 element.node1.toString() 
+      		 							   + element.node2.toString() 
+      		 							   + " " ) 
+      		)  */
+      	
+     			 //	&& collision.containsValue(element.node1.toString())
+      			//	&& collision.containsValue(element.node2.toString())
+      	) {
+      			//if(baba==0){
+      			//col = "bla"; // + element.node1.toString() + element.node2.toString();
+      			//baba ++;
+      			//}
+      			//else{
+      		if( !DataRead.col.contains(element.node1.toString()+element.node2.toString()) /* && !DataRead.col.contains(element.node2.toString()+element.node1.toString()) */)
+      		 DataRead.col += " " + element.node1.toString() + element.node2.toString();
+      	
+      			//}
+      			//	System.out.println(DataRead.col);
+      		
+      			//	collision.put("1", element.node1.toString());
+      			//	collision.put("1", element.node2.toString());
+      			
+      		bondtype = "double";
+      	
+      	}
+      
+      	else{
+      	
+      		bondtype = "single";
+      		
+      	}
+      	
+  		//System.out.println(DataRead.col);
+  		
+      StaticGraphics.drawLine(cs[0],cs[2], bondtype);
+      
+    	//  if(DataRead.atomPl==DataRead.atomNo-1) 
+     	// 	DataRead.col = "";      
+       
+        
+        //network.graph.degreeOf(element.node1);
+        
+      	//   StaticGraphics.circleArc(cs[2], cs[0], cs[2]);
+        
+         // StaticGraphics.circleArc(cs[0], cs[0], cs[1]);
+          
+        
+        //StaticGraphics.circleArc(cs[0], cs[1], cs[2]);
+        
+       // StaticGraphics.circleArc(cs[0], cs[1], cs[2]);
         //drawLineString(ls);
         //drawLine(cs[0], cs[1]);
         //drawLine(cs[1], cs[2]);

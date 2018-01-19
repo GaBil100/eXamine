@@ -1,4 +1,4 @@
-eXamine (eXamol, working title)
+eXamol (working title)
 =======
 
 Visualisation of atom groups in molecular graphs with eXamol (based on the eXamine engine).
@@ -16,3 +16,7 @@ Execution
 -----------------------
 
     java -jar examines.jar
+
+eXamine 
+-----------------------
+https://github.com/ls-cwi/eXamine

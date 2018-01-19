@@ -34,6 +34,7 @@ public class StaticGraphics {
     // Draw plane/volume bounds, null if not applicable.
     protected static PVector viewBoundsTopLeft = null;
     protected static PVector viewBoundsDimension = null;
+    public static int fascv = -1;
     
     /**
      * Transition function for float value,
@@ -181,11 +182,75 @@ public class StaticGraphics {
         dm.pg.fill(shape);
     }
     
-    public static void drawLine(PVector origin, PVector target) {
+    public static void drawLine(PVector origin, PVector target, String bondtype) {
         Path2D.Double line = new Path2D.Double();
+        //Single Bonds
+        
+        strokeWeight(1);
+        if( bondtype.contains("single")){
         line.moveTo(t(origin.x), t(origin.y));
         line.lineTo(t(target.x), t(target.y));
+        dm.pg.draw(line);  
+        
+             
+        }
+        
+      
+        
+        
+        
+        //Double Bonds
+        
+        if( bondtype.contains("double")){
+        int g = 2;
+        
+        if( origin.y == target.y ){
+        line.moveTo(t(origin.x), t(origin.y+g));
+        line.lineTo(t(target.x), t(target.y+g));
         dm.pg.draw(line);
+        
+        
+         line.moveTo(t(origin.x), t(origin.y-g));
+        line.lineTo(t(target.x), t(target.y-g));
+        dm.pg.draw(line);}
+        
+        
+         else if( origin.x == target.x ){
+        line.moveTo(t(origin.x+g), t(origin.y));
+        line.lineTo(t(target.x+g), t(target.y));
+        dm.pg.draw(line);
+        
+        
+         line.moveTo(t(origin.x-g), t(origin.y));
+        line.lineTo(t(target.x-g), t(target.y));
+        dm.pg.draw(line);}
+        
+        else if(  Math.abs(origin.y-target.y) < Math.abs(origin.x-target.x) ) {
+        line.moveTo(t(origin.x), t(origin.y+g));
+        line.lineTo(t(target.x), t(target.y+g));
+        dm.pg.draw(line);
+        
+        
+         line.moveTo(t(origin.x), t(origin.y-g));
+        line.lineTo(t(target.x), t(target.y-g));
+        dm.pg.draw(line);}
+        
+         else if(  Math.abs(origin.y-target.y) > Math.abs(origin.x-target.x) ) {
+        line.moveTo(t(origin.x+g), t(origin.y));
+        line.lineTo(t(target.x+g), t(target.y));
+        dm.pg.draw(line);
+        
+        
+         line.moveTo(t(origin.x-g), t(origin.y));
+        line.lineTo(t(target.x-g), t(target.y));
+        dm.pg.draw(line);}
+        
+     
+   		}
+       
+         fascv = fascv *(-1);  
+        
+        
     }
     
     public static void drawLineString(LineString lineString) {
@@ -195,8 +260,9 @@ public class StaticGraphics {
         line.moveTo(t(cs[0].x), t(cs[0].y));
         for(int i = 1; i < cs.length; i++) {
             line.lineTo(t(cs[i].x), t(cs[i].y));
+            System.out.println("here");
         }
-        dm.pg.draw(line);
+      //  dm.pg.draw(line);
     }
     
     public static void drawCurve(PVector origin, PVector control, PVector target) {
@@ -205,7 +271,7 @@ public class StaticGraphics {
         double midX = t(control.x);
         double midY = t(control.y);
         curve.curveTo(midX, midY, midX, midY, t(target.x), t(target.y));
-        dm.pg.draw(curve);
+       // dm.pg.draw(curve);
     }
     
     public static void drawRect(double a, double b, double c, double d) {
@@ -225,7 +291,8 @@ public class StaticGraphics {
     }
     
     public static void circleArc(PVector p1, PVector p2, PVector p3) {
-        dm.pg.draw(getArc(t(p1), t(p2), t(p3)));
+        
+        dm.pg.draw(getArc(t(p1), t(p2), t(p3)));  // get link
     }
     
     public static Shape getArc(PVector p1, PVector p2, PVector p3) {

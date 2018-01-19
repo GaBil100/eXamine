@@ -271,7 +271,7 @@ public class Overview extends PositionedSnippet {
                     // Representation.
                     DefaultEdge originalEdge = layout.network.graph.getEdge(sP, tP);
                     LinkRepresentation rep
-                            = new LinkRepresentation(visualization, originalEdge, sP, tP, intCs);
+                            = new LinkRepresentation(visualization, originalEdge, sP, tP, intCs, contextNetwork);
                     iR.add(rep);
                 }
 

@@ -1,4 +1,4 @@
-eXamol (working title)
+eXamol
 =======
 
 Visualisation of atom groups in molecular graphs with eXamol (based on the eXamine engine).

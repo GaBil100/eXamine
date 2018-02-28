@@ -19,6 +19,10 @@ Example
 -----------------------
 
 ![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/ssf.png)
+Fig 1: Taxol - Skeletal Structure Formula
+
+![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/vsf.png)
+Fig 2: Taxol - Skeletal Structure Formula
 
 eXamine 
 -----------------------

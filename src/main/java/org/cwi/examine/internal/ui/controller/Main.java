@@ -1,5 +1,6 @@
-package controller;
-	
+package org.cwi.examine.internal.ui.controller;
+
+
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 

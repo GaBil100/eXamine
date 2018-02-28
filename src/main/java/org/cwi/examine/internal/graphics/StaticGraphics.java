@@ -22,6 +22,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Collection;
 
+import org.cwi.examine.internal.Option;
+
 /**
  * Context that provides all graphics related
  * methods (when they are statically imported).
@@ -35,6 +37,8 @@ public class StaticGraphics {
     protected static PVector viewBoundsTopLeft = null;
     protected static PVector viewBoundsDimension = null;
     public static int fascv = -1;
+    
+
     
     /**
      * Transition function for float value,
@@ -185,8 +189,14 @@ public class StaticGraphics {
     public static void drawLine(PVector origin, PVector target, String bondtype) {
         Path2D.Double line = new Path2D.Double();
         //Single Bonds
+  	boolean scel =  Option.getScel();        
+        if(scel == false )
+        	strokeWeight(1);
         
-        strokeWeight(1);
+          if(scel == true )
+       		 strokeWeight(1);
+        
+        
         if( bondtype.contains("single")){
         line.moveTo(t(origin.x), t(origin.y));
         line.lineTo(t(target.x), t(target.y));
@@ -202,8 +212,55 @@ public class StaticGraphics {
         //Double Bonds
         
         if( bondtype.contains("double")){
-        int g = 2;
         
+        
+        
+        strokeWeight(1);
+        /*
+        line.moveTo(t(origin.x), t(origin.y));
+        line.lineTo(t(target.x), t(target.y));
+        dm.pg.draw(line);    */
+       
+        
+        //var x1 = ..., x2 = ..., y1 = ..., y2 = ... // The original line
+	double L = Math.sqrt((origin.x-target.x)*(origin.x-target.x)+(origin.y-target.y)*(origin.y-target.y));
+
+	int offsetPixels = 3;
+
+	// This is the second line
+	double x1p = origin.x + offsetPixels * ( (target.y-origin.y) / L);
+	double x2p = target.x + offsetPixels * ( (target.y-origin.y) / L);
+	double y1p = origin.y + offsetPixels * ( (origin.x-target.x) / L );
+	double y2p = target.y  + offsetPixels * ( (origin.x-target.x) / L );
+	
+	
+
+	
+	
+	line.moveTo(t(x1p), t(y1p));
+        line.lineTo(t(x2p), t(y2p));
+        dm.pg.draw(line); 
+        
+        
+	 x1p = origin.x - offsetPixels * ( (target.y-origin.y) / L);
+	 x2p = target.x - offsetPixels * ( (target.y-origin.y) / L);
+	 y1p = origin.y - offsetPixels * ( (origin.x-target.x) / L );
+	 y2p = target.y  - offsetPixels * ( (origin.x-target.x) / L );
+	
+	
+		//setStroke(dashed);
+	    strokeWeight(1);
+	line.moveTo(t(x1p), t(y1p));
+        line.lineTo(t(x2p), t(y2p));
+        dm.pg.draw(line); 
+       
+	   
+       /*  */
+        
+        
+        
+        
+        /*
         if( origin.y == target.y ){
         line.moveTo(t(origin.x), t(origin.y+g));
         line.lineTo(t(target.x), t(target.y+g));
@@ -246,11 +303,11 @@ public class StaticGraphics {
         dm.pg.draw(line);}
         
      
-   		}
+   	 */	}
        
          fascv = fascv *(-1);  
         
-        
+       
     }
     
     public static void drawLineString(LineString lineString) {

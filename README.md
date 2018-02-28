@@ -18,7 +18,7 @@ Execution
 Example 
 -----------------------
 
-![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/)
+![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/ssf.png)
 
 eXamine 
 -----------------------

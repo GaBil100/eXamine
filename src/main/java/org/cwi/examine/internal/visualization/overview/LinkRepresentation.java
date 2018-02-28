@@ -14,6 +14,8 @@ import org.cwi.examine.internal.data.HAnnotation;
 import org.cwi.examine.internal.data.Network;
 import org.jgrapht.graph.DefaultEdge;
 
+import org.cwi.examine.internal.Option;
+
 import org.jgrapht.graph.*;
 import org.jgrapht.Graph.*;
 
@@ -37,6 +39,9 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
     public final DefaultEdge edge;  // Underlying edge.
     public final PVector[] cs;
      private Network network;
+    
+    
+ 
     
     // public  String col = "" ;
     
@@ -150,8 +155,16 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
       	}
       	
   		//System.out.println(DataRead.col);
+  		//Option option = new Option();
+  	//	public boolean scel = Option.getScel() ;
+  	//	System.out.println(Option.getScel() );
   		
-      StaticGraphics.drawLine(cs[0],cs[2], bondtype);
+  		if( ( !element.node1.toString().contains("H")  && !element.node2.toString().contains("H")  )  || !Option.getScel() )  
+    				  StaticGraphics.drawLine(cs[0],cs[2], bondtype);   
+      
+      
+      
+      
       
     	//  if(DataRead.atomPl==DataRead.atomNo-1) 
      	// 	DataRead.col = "";      

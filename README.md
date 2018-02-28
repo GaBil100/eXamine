@@ -13,7 +13,11 @@ Apache Maven is required to compile the code via:
 Execution 
 -----------------------
 
-    java -jar examines.jar
+    java -jar examines.jar On
+Diagram Type (fig 1) - to get skeletal structure formula diagram
+
+    java -jar examines.jar Off
+Diagram Type (fig 2) - to get valence bond formula diagram
 
 Example 
 -----------------------

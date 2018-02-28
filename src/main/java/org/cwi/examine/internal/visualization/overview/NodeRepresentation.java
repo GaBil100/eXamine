@@ -29,12 +29,16 @@ import org.cwi.examine.internal.graphics.StaticGraphics;
 import org.cwi.examine.internal.layout.Layout;
 import org.jgrapht.graph.DefaultEdge;
 
+import org.cwi.examine.internal.Option;
+
 import static org.cwi.examine.internal.graphics.StaticGraphics.*;
 
 // Node representation.
 public class NodeRepresentation extends Representation<HNode> {
 
     private final Visualization visualization;
+    
+    
     
     public NodeRepresentation(final Visualization visualization, HNode element) {
         super(element);
@@ -51,6 +55,8 @@ public class NodeRepresentation extends Representation<HNode> {
 
     @Override
     public void draw() {
+    
+    	  boolean scel =  Option.getScel();
     	ConvertToAtom cta = new ConvertToAtom();
         color(Color.WHITE);
         translate(topLeft);
@@ -58,22 +64,58 @@ public class NodeRepresentation extends Representation<HNode> {
         // Get label bounds, but also annotations label font.
         PVector bounds = Layout.labelDimensions(element, true);
         Shape shape = shape(bounds);
+        
         if(!element.toString().contains("C"))   
         translate(-0.5 * bounds.x, -0.5 * bounds.y);
+        
+        
        // color(highlight() ? Parameters.containmentColor : Color.BLACK);
-       if(element.toString().contains("C"))  
-         translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
+       
+    
+       
+       if(element.toString().contains("C") )  	{							//OPTION
+       
+       if(scel ==false)
+       	 translate(-0.5 * bounds.x, -0.5 * bounds.y);
+       	 
+       	  if (scel ==true)
+        translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
+         
+         
+         }
+         
+         
+         
+         
         // Background rectangle.
         if(!element.toString().contains("H"))
         color(highlight() ? Parameters.containmentColor : Color.WHITE);
-        if(element.toString().contains("H"))
-         color(highlight() ? Parameters.containmentColor : Color.BLACK);
+        
+        
+        
+        
+        
+        
+        if(element.toString().contains("H"))	{									//OPTION
+         if(scel ==false)
+           color(highlight() ? Parameters.containmentColor : Color.WHITE);
+         //color(highlight() ? Parameters.containmentColor : Color.BLACK);
+         
+         if (scel ==true)
+          translate(-1110.5 * bounds.x, -1110.5 * bounds.y);
+         
                             //(Color) styleValue(BasicVisualLexicon.NODE_FILL_COLOR));
+                            
+                            
+                   }         
+                            
+                            
         fill(shape);
         
         // Foreground outline with color coding.
-        color(Color.WHITE); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
-        strokeWeight(1);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
+         if(scel ==false)
+        color(Color.BLACK); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
+        strokeWeight(0.5);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
         StaticGraphics.draw(shape);
         
         picking();
@@ -86,16 +128,22 @@ public class NodeRepresentation extends Representation<HNode> {
         color(highlight() ? Parameters.textContainedColor : Color.RED);
         
         if(element.toString().contains("H"))
-        color(highlight() ? Parameters.textContainedColor : Color.WHITE);
+         color(highlight() ? Parameters.textContainedColor : Color.BLACK);
+      // color(highlight() ? Parameters.textContainedColor : Color.WHITE);
         
         if(element.toString().contains("N"))
         color(highlight() ? Parameters.textContainedColor : Color.BLUE);
         
         
        //(Color) styleValue(BasicVisualLexicon.NODE_LABEL_COLOR));
-        if(!element.toString().contains("C"))
+       
+       
+        if(!element.toString().contains("C") || scel == false )										//OPTION
        // color(highlight() ? Parameters.textContainedColor : Color.RED);
         text(cta.convert_to_atom(element.toString() + " "), 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
+   
+   
+   
     }
     
     private Shape shape(PVector bounds) {

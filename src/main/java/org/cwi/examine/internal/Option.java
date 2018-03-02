@@ -4,8 +4,7 @@ import org.cwi.examine.internal.data.DataSet;
 import org.cwi.examine.internal.visualization.Visualization;
 import org.cwi.examine.internal.model.Model;
 import org.cwi.examine.internal.molepan.dataread.DataRead;
-
-//import org.cwi.examine.internal.ui.controller.Main;
+import org.cwi.examine.internal.ui.controller.Main;
 
 
 import java.io.IOException;

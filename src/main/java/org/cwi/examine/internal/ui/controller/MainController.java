@@ -1,14 +1,22 @@
-package org.cwi.examine.internal.ui.controller;
+package controller;
+
+import java.io.File;
+import java.text.DateFormat.Field;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class MainController {
 	
 	//VIEW Window
+	Stage primaryStage;
+	public boolean skeletal; 
+	
 	@FXML 
 	private Button start_eXamole;
 	private Button choose_button;
@@ -29,11 +37,20 @@ public class MainController {
 	public void handleButtonChoose() {
 		
 	
-		System.out.println("test button_choose");
+		
 		//label.setText("H Off");
 		//if(hydrogen == true) {
 		// start_eXamole.setText("Remove Hydrogen");
-	
+		
+		  FileChooser chooser = new FileChooser();
+          File file = chooser.showOpenDialog(primaryStage);
+          if (file != null) {
+              String path = file.toString();
+              System.out.println(path);
+          }
+              
+       
+           
 	}
 	
 	@FXML
@@ -52,7 +69,9 @@ public class MainController {
 		
 	
 		System.out.println("test button_skeletal");
-		//label.setText("H Off");
+	
+		//show_h.setText("H Off");
+
 		//if(hydrogen == true) {
 		// start_eXamole.setText("Remove Hydrogen");
 	

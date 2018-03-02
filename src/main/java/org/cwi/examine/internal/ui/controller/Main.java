@@ -1,4 +1,4 @@
-package controller;
+package org.cwi.examine.internal.ui.controller;
 	
 import java.io.File;
 import java.io.IOException;

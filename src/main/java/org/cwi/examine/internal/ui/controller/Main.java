@@ -17,47 +17,11 @@ import javafx.scene.layout.AnchorPane;
 
 
 public class Main extends Application {
-	private Stage primaryStage;
+	Stage primaryStage;
 	
-	
-	
-	
-	
-	
-	
-	
-	 @Override
-	    public void start(final Stage stage) throws Exception {
-	        Button button = new Button("Choose");
-	        Label chosen = new Label();
-	        button.setOnAction(event -> {
-	            FileChooser chooser = new FileChooser();
-	            File file = chooser.showOpenDialog(stage);
-	            if (file != null) {
-	                String fileAsString = file.toString();
-
-	                chosen.setText("Chosen: " + fileAsString);
-	            } else {
-	                chosen.setText(null);
-	            }
-	        });
-
-	        VBox layout = new VBox(10, button, chosen);
-	        layout.setMinWidth(400);
-	        layout.setAlignment(Pos.CENTER);
-	        layout.setPadding(new Insets(10));
-	        stage.setScene(new Scene(layout));
-	        stage.show();
-	    }
 
 	
-	
-	
-	
-	
-	
-	
-	/*
+
 	
 	
 	@Override
@@ -96,7 +60,7 @@ public class Main extends Application {
 		{
 			e.printStackTrace();
 		}
-	}  */
+	}  /**/
 	 
 	public static void main(String[] args) {
 		launch(args);

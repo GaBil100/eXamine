@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import  org.cwi.examine.internal.startExamol;
 
 public class MainController {
 	
@@ -26,9 +27,9 @@ public class MainController {
 	private CheckBox show_c;
 	private CheckBox show_h;
 	
-	private Main main;
+	private startExamol main;
 	
-	public void setMain(Main main) {
+	public void setMain(startExamol main) {
 		this.main = main;
 		
 	}

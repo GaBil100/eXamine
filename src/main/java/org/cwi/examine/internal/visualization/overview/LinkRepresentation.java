@@ -108,6 +108,8 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
        
       if(  !element.node1.toString().contains("H") 
       	&& !element.node2.toString().contains("H") 
+      	&& !element.node1.toString().contains("AR")  
+      	&& !element.node2.toString().contains("AR")
       	&& network.graph.degreeOf(element.node1) < 4 
       	&& network.graph.degreeOf(element.node2) < 4
       	&& ( !DataRead.col.contains(element.node1.toString())  // ai not in list, or ai and aj in list
@@ -147,6 +149,24 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
       		bondtype = "double";
       	
       	}
+      	
+      	 else if(
+      	      element.node1.toString().contains("ARa")  
+      	&& element.node2.toString().contains("ARa")
+      	){
+      	
+      		bondtype = "aromat_a";	
+      		//System.out.println(bondtype);
+      	}
+      	
+      	else if(
+      	      element.node1.toString().contains("ARb")  
+      	&& element.node2.toString().contains("ARb")
+      	){
+      	
+      		bondtype = "aromat_b";	
+      		//System.out.println(bondtype);
+      	}
       
       	else{
       	
@@ -159,7 +179,12 @@ public class LinkRepresentation extends Representation<LinkRepresentation.Link> 
   	//	public boolean scel = Option.getScel() ;
   	//	System.out.println(Option.getScel() );
   		
-  		if( ( !element.node1.toString().contains("H")  && !element.node2.toString().contains("H")  )  || !Option.getScel() )  
+  		if( ( !element.node1.toString().contains("H")  && !element.node2.toString().contains("H") 
+  				
+  				   )  || (!Option.getScel() 
+  				   )
+  				   
+  				   )  
     				  StaticGraphics.drawLine(cs[0],cs[2], bondtype);   
       
       

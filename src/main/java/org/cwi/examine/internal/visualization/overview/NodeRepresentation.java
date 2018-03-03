@@ -114,7 +114,7 @@ public class NodeRepresentation extends Representation<HNode> {
         
         // Foreground outline with color coding.
          if(scel ==false)
-        color(Color.BLACK); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
+        color(Color.WHITE); //(Color) styleValue(BasicVisualLexicon.NODE_BORDER_PAINT));
         strokeWeight(0.5);    //styleValue(BasicVisualLexicon.NODE_BORDER_WIDTH));
         StaticGraphics.draw(shape);
         
@@ -140,7 +140,13 @@ public class NodeRepresentation extends Representation<HNode> {
        
         if(!element.toString().contains("C") || scel == false )										//OPTION
        // color(highlight() ? Parameters.textContainedColor : Color.RED);
-        text(cta.convert_to_atom(element.toString() + " "), 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
+       
+       
+        text(cta.convert_to_atom(element.toString() ) , 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
+   
+       // text(element.toString() , 0.5 * (bounds.y + org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE) - 3, bounds.y - org.cwi.examine.internal.visualization.Parameters.NODE_OUTLINE - 3);
+   
+   	//
    
    
    

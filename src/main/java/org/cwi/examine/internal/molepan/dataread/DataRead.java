@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.FileSystems;
 import org.cwi.examine.internal.Option;
+
 public class DataRead {
 
 
@@ -33,9 +34,7 @@ public class DataRead {
 	
 	public  DataRead() {
 	
-		String file = Option.getPath();		
-		
-		//"data/molecule/test.itp";
+		String file = Option.getPath();
 		String node_file = "data/atoms.nodes";
 		String atom_header = "Identifier	Score	Symbol	URL";
 		String annotations_header = "Identifier	Category	Score	Symbol	URL";

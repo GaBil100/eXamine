@@ -189,24 +189,82 @@ public class StaticGraphics {
     public static void drawLine(PVector origin, PVector target, String bondtype) {
         Path2D.Double line = new Path2D.Double();
         //Single Bonds
-  	boolean scel =  Option.getScel();        
+  	boolean scel =  Option.getScel(); 
+  	
+  	double x1p = 0;
+	double x2p = 0;
+	double y1p = 0;
+	double y2p = 0;	 
+	double L = 0;  
+	int offsetPixels = 0;
+
+	    
         if(scel == false )
         	strokeWeight(1);
         
           if(scel == true )
-       		 strokeWeight(1);
+       		 strokeWeight(2);
         
         
-        if( bondtype.contains("single")){
+        if( bondtype.contains("single")    ||    bondtype.contains("aromat_a")  ||    bondtype.contains("aromat_b")){
         line.moveTo(t(origin.x), t(origin.y));
         line.lineTo(t(target.x), t(target.y));
+        color(Color.BLACK);
         dm.pg.draw(line);  
+        
+    
         
              
         }
         
       
+            if( bondtype.contains("aromat_a")){
+            
+            	 L = Math.sqrt((origin.x-target.x)*(origin.x-target.x)+(origin.y-target.y)*(origin.y-target.y));
+		offsetPixels =  -53;
+            	x1p = origin.x - offsetPixels * ( (target.y-origin.y) / L);
+		x2p = target.x - offsetPixels * ( (target.y-origin.y) / L);
+	 	y1p = origin.y - offsetPixels * ( (origin.x-target.x) / L );
+	 	y2p = target.y  - offsetPixels * ( (origin.x-target.x) / L );
+	 	
+	 	/*line.moveTo(t(x1p), t(y1p));
+       		line.lineTo(t(x2p), t(y2p));
+       		dm.pg.draw(line); 	*/
+	 	
+	 	double cx = (x1p + x2p) / 2;
+	 	double cy = (y1p + y2p) / 2;
+         if(scel == true )
+	   strokeWeight(2);
+            	  
+            	   //     color(Color.LIGHT_GRAY);
+            	    Shape circle = new Ellipse2D.Double(cx-35, cy-35, 70, 70);
+       		    dm.pg.draw(circle);     
         
+        	}
+        	
+        	   if( bondtype.contains("aromat_b")){
+            
+            	 L = Math.sqrt((origin.x-target.x)*(origin.x-target.x)+(origin.y-target.y)*(origin.y-target.y));
+		offsetPixels =  53;
+            	x1p = origin.x - offsetPixels * ( (target.y-origin.y) / L);
+		x2p = target.x - offsetPixels * ( (target.y-origin.y) / L);
+	 	y1p = origin.y - offsetPixels * ( (origin.x-target.x) / L );
+	 	y2p = target.y  - offsetPixels * ( (origin.x-target.x) / L );
+	 	
+	 	/*line.moveTo(t(x1p), t(y1p));
+       		line.lineTo(t(x2p), t(y2p));
+       		dm.pg.draw(line); 	*/
+	 	
+	 	double cx = (x1p + x2p) / 2;
+	 	double cy = (y1p + y2p) / 2;
+	 	if(scel == true )
+	   strokeWeight(2);
+	 	
+            	// color(Color.LIGHT_GRAY);
+            	Shape circle = new Ellipse2D.Double(cx-35, cy-35, 70, 70);
+       		 dm.pg.draw(circle);     
+        
+        	}
         
         
         //Double Bonds
@@ -214,32 +272,38 @@ public class StaticGraphics {
         if( bondtype.contains("double")){
         
         
-        
-        strokeWeight(1);
-        /*
+         if(scel == true )
+		 strokeWeight(2);
+        /* 
         line.moveTo(t(origin.x), t(origin.y));
         line.lineTo(t(target.x), t(target.y));
+        color(Color.BLACK);
         dm.pg.draw(line);    */
        
         
         //var x1 = ..., x2 = ..., y1 = ..., y2 = ... // The original line
-	double L = Math.sqrt((origin.x-target.x)*(origin.x-target.x)+(origin.y-target.y)*(origin.y-target.y));
+	 L = Math.sqrt((origin.x-target.x)*(origin.x-target.x)+(origin.y-target.y)*(origin.y-target.y));
 
-	int offsetPixels = 3;
+
+
+	 offsetPixels = 3;
 
 	// This is the second line
-	double x1p = origin.x + offsetPixels * ( (target.y-origin.y) / L);
-	double x2p = target.x + offsetPixels * ( (target.y-origin.y) / L);
-	double y1p = origin.y + offsetPixels * ( (origin.x-target.x) / L );
-	double y2p = target.y  + offsetPixels * ( (origin.x-target.x) / L );
 	
 	
-
-	
-	
+	 
+	  if(scel == true )
+	   strokeWeight(2);
+	    //color(Color.LIGHT_GRAY);}
+	    
+	 x1p = origin.x + offsetPixels * ( (target.y-origin.y) / L);
+	 x2p = target.x + offsetPixels * ( (target.y-origin.y) / L);
+	 y1p = origin.y + offsetPixels * ( (origin.x-target.x) / L );
+	 y2p = target.y  + offsetPixels * ( (origin.x-target.x) / L );	
 	line.moveTo(t(x1p), t(y1p));
         line.lineTo(t(x2p), t(y2p));
         dm.pg.draw(line); 
+        
         
         
 	 x1p = origin.x - offsetPixels * ( (target.y-origin.y) / L);
@@ -249,11 +313,11 @@ public class StaticGraphics {
 	
 	
 		//setStroke(dashed);
-	    strokeWeight(1);
+	    //strokeWeight(2);
 	line.moveTo(t(x1p), t(y1p));
         line.lineTo(t(x2p), t(y2p));
         dm.pg.draw(line); 
-       
+      /* */
 	   
        /*  */
         

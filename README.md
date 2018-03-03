@@ -13,16 +13,18 @@ Apache Maven is required to compile the code via:
 Execution 
 -----------------------
 
-    java -jar examines.jar On
+    java -jar examines.jar
 
 
 Example 
 -----------------------
 
 ![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/ssf-ar.png)
+
 Fig 1: Taxol - Skeletal Structure Formula
 
 ![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/vs-ar.png)
+
 Fig 2: Taxol - Skeletal Structure Formula
 
 eXamine 

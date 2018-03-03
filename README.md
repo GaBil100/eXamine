@@ -14,18 +14,15 @@ Execution
 -----------------------
 
     java -jar examines.jar On
-Diagram Type (fig 1) - to get skeletal structure formula diagram
 
-    java -jar examines.jar Off
-Diagram Type (fig 2) - to get valence bond formula diagram
 
 Example 
 -----------------------
 
-![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/ssf.png)
+![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/ssf-ar.png)
 Fig 1: Taxol - Skeletal Structure Formula
 
-![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/vsf.png)
+![My image](https://raw.githubusercontent.com/GaBil100/eXamine-eXamol-/stand-alone/documents/img/vs-ar.png)
 Fig 2: Taxol - Skeletal Structure Formula
 
 eXamine 

@@ -140,7 +140,7 @@ public class DataRead {
      				
      				if( !line.contains(bonds) && isAtom == true && isAtomRead == true && !parts[0].contains(comment)){
    			 		    modules_w.write("\n");}
-     				a
+     				
      				// Read Atom and Atom_C
    			 		if(!parts[0].contains(comment) && isAtom == true){
    			 		

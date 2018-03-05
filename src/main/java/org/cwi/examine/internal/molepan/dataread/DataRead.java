@@ -140,7 +140,7 @@ public class DataRead {
      				
      				if( !line.contains(bonds) && isAtom == true && isAtomRead == true && !parts[0].contains(comment)){
    			 		    modules_w.write("\n");}
-     				
+     				a
      				// Read Atom and Atom_C
    			 		if(!parts[0].contains(comment) && isAtom == true){
    			 		
@@ -154,7 +154,7 @@ public class DataRead {
    			 			partitions_w.write("\n");	
    			 			for( int a = 2;a<parts.length;a++){	
    			 				//if( collision.contains(categories[a] + "-" + parts[a]) )
-   			 				if(!parts[a].contains(comment)){
+   			 				if(!parts[a].contains(comment) && (!Option.getScel() || !parts[5].contains("H")) ){ //CHANGE MONDAY
    			 					if(!collision.contains( categories.get(k) + "_" + "(" + parts[a] + ")" ) ){
    			 					
    			 					    collision.add(categories.get(k) + "_" + "(" + parts[a] + ")" );

@@ -91,8 +91,18 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>      
+                 
+            <plugin>
+	         <groupId>com.zenjava</groupId>
+	         <artifactId>javafx-maven-plugin</artifactId>
+	         <version>8.6.0</version>
+	         <configuration>
+		         <mainClass>org.cwi.examine.internal.startExamo</mainClass>
+	         </configuration>
             </plugin>
-
+                 
+                 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

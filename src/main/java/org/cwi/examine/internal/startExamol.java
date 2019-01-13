@@ -40,6 +40,13 @@ public class startExamol extends Application {
 	boolean file_chsn = false;
 	
 	
+	/**
+	if(args(1) not NULL):
+	args {open}:
+ * DataSet dataSet = new DataSet("file");
+ */
+	
+	
 	@Override
    	public void start(final Stage stage) throws java.io.IOException {
         Button button = new Button("Choose");
